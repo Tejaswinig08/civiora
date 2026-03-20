@@ -62,7 +62,7 @@ mvn spring-boot:run
 http://localhost:8080 
 ```
 
-###📡 API Architecture
+📡 API Architecture
 The system follows a modular RESTful API design, organized by domain for scalability and maintainability.
 
 ### 🔐 Authentication
