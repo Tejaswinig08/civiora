@@ -63,8 +63,8 @@ http://localhost:8080
 ```
 
 ##📡 API Architecture
---The system follows a modular RESTful API design, organized by domain for scalability and maintainability.
----
+-- The system follows a modular RESTful API design, organized by domain for scalability and maintainability.
+
 ### 🔐 Authentication
 
 | Endpoint | Method | Description |
@@ -201,4 +201,5 @@ Login → Post Notices → View Payments → Manage Bookings → Publish Audit R
 ## 🚀 Future Enhancements
 
 - UPI payment gateway integration  
-- Real-time notifications (WebSockets)  
+- Real-time notifications (WebSockets)
+- Mobile App Version
