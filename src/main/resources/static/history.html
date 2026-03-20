@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Civiora - Payment History</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            min-height: 100vh;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            padding: 15px;
+            display: block;
+            text-align: right;
+            background-color: #ffffff;
+            border-bottom: 1px solid #ddd;
+        }
+        .navbar a {
+            color: #b8860b;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 700;
+            margin-right: 25px;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+        .navbar a:hover { color: #1a1a1a; }
+
+        /* BRUSHED GOLD TOP SECTION */
+        .top {
+            display: block;
+            text-align: center;
+            padding: 50px 20px;
+            background: linear-gradient(135deg, #bd9537 0%, #f9f295 50%, #b8860b 100%);
+            color: #1a1a1a;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .top h1 {
+            font-size: 50px;
+            font-weight: 900;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        .top p {
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        /* CONTENT */
+        .content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* PASSBOOK HEADER */
+        .passbook-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .passbook-header h2 {
+            font-size: 26px;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+
+        .balance-card {
+            background: linear-gradient(135deg, #bd9537 0%, #f9f295 50%, #b8860b 100%);
+            color: #1a1a1a;
+            padding: 18px 28px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(184, 134, 11, 0.3);
+        }
+        .balance-card p {
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+        .balance-card .amount {
+            font-size: 28px;
+            font-weight: 900;
+        }
+
+        /* TRANSACTIONS */
+        .transactions-section {
+            background: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.05);
+            border: 1px solid #eee;
+        }
+
+        .transactions-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .transaction-item {
+            background: #fffdf5;
+            padding: 18px 20px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 5px solid #bd9537;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            animation: fadeIn 0.4s ease;
+        }
+        .transaction-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(184, 134, 11, 0.15);
+        }
+
+        .transaction-item.deposit { border-left-color: #28a745; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .transaction-info {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .transaction-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            background: #d4edda;
+            color: #28a745;
+        }
+
+        .transaction-details .type {
+            font-weight: 700;
+            color: #1a1a1a;
+            font-size: 15px;
+        }
+        .transaction-details .date {
+            font-size: 12px;
+            color: #999;
+            margin-top: 3px;
+        }
+
+        .transaction-right { text-align: right; }
+
+        .transaction-amount {
+            font-size: 17px;
+            font-weight: 800;
+            color: #28a745;
+        }
+
+        .balance-display {
+            font-size: 12px;
+            color: #999;
+            margin-top: 2px;
+        }
+
+        /* EMPTY STATE */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+        .empty-state .icon {
+            font-size: 60px;
+            margin-bottom: 15px;
+        }
+        .empty-state h3 {
+            font-size: 20px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+        .empty-state p {
+            font-size: 14px;
+        }
+
+        /* PAGINATION */
+        .pagination {
+            margin-top: 25px;
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+        }
+        .pagination button {
+            padding: 8px 14px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            background: #fff;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        .pagination button:hover {
+            border-color: #bd9537;
+            color: #b8860b;
+        }
+        .pagination button.active {
+            background: linear-gradient(135deg, #bd9537 0%, #f9f295 50%, #b8860b 100%);
+            color: #1a1a1a;
+            border-color: #bd9537;
+            font-weight: 800;
+        }
+
+        /* LOADING */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+            font-size: 16px;
+        }
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #ddd;
+            border-top-color: #bd9537;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 600px) {
+            .top h1 { font-size: 35px; }
+            .passbook-header { flex-direction: column; align-items: flex-start; }
+            .transaction-item { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .transaction-right { text-align: left; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="navbar">
+        <a onclick="location.href='dashboard.html'">Dashboard</a>
+        <a onclick="logout()">Logout</a>
+    </div>
+
+    <div class="top">
+        <h1>Civiora</h1>
+        <p>Build for better society living!!</p>
+    </div>
+
+    <div class="content">
+        <div class="passbook-header">
+            <h2>📜 Payment History</h2>
+        </div>
+
+        <div class="transactions-section">
+            <div id="transactionsList" class="transactions-list">
+                <div class="loading"><span class="spinner"></span>Loading transactions...</div>
+            </div>
+            <div id="paginationControls" class="pagination"></div>
+        </div>
+    </div>
+
+    <script>
+        let transactions = [];
+        let currentPage = 1;
+        const itemsPerPage = 10;
+
+        // ---- Load Passbook ----
+        async function loadPassbook() {
+            const userId = localStorage.getItem('userId');
+
+            if (!userId) {
+                location.href = 'login.html';
+                return;
+            }
+
+            try {
+                const res = await fetch(`http://localhost:8080/passbook/${userId}`);
+                transactions = await res.json();
+
+                if (transactions.length > 0) {
+                    // First item is the latest (ordered by date desc)
+                    document.getElementById('currentBalance').textContent = transactions[0].currBalance;
+                }
+
+                render();
+            } catch (err) {
+                document.getElementById('transactionsList').innerHTML =
+                    '<div class="empty-state"><div class="icon">⚠️</div><h3>Connection Error</h3><p>Could not connect to server. Please check if the server is running.</p></div>';
+            }
+        }
+
+        // ---- Render Transactions ----
+        function render() {
+            const list = document.getElementById('transactionsList');
+            const pag = document.getElementById('paginationControls');
+
+            if (transactions.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">📭</div>
+                        <h3>No Transactions Yet</h3>
+                        <p>Your payment history will appear here after your first deposit.</p>
+                    </div>`;
+                pag.innerHTML = '';
+                return;
+            }
+
+            const totalPages = Math.ceil(transactions.length / itemsPerPage);
+            const slice = transactions.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+            list.innerHTML = slice.map((t, index) => {
+                const style = `animation-delay: ${index * 0.05}s`;
+                return `
+                <div class="transaction-item deposit" style="${style}">
+                    <div class="transaction-info">
+                        <div class="transaction-icon">📥</div>
+                        <div class="transaction-details">
+                            <div class="type">${t.description || 'Deposit'}</div>
+                            <div class="date">${new Date(t.date).toLocaleString('en-IN')}</div>
+                        </div>
+                    </div>
+                    <div class="transaction-right">
+                        <div class="transaction-amount">+₹${t.amount}</div>
+                    </div>
+                </div>`;
+            }).join('');
+
+            // Pagination
+            pag.innerHTML = '';
+            for (let i = 1; i <= totalPages; i++) {
+                pag.innerHTML += `<button class="${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+            }
+        }
+
+        function goToPage(p) {
+            currentPage = p;
+            render();
+            window.scrollTo({ top: 300, behavior: 'smooth' });
+        }
+
+        // ---- Logout ----
+        function logout() {
+            localStorage.removeItem('userId');
+            localStorage.removeItem('role');
+            window.location.href = 'login.html';
+        }
+
+        // ---- Init ----
+        window.onload = () => {
+            loadPassbook();
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Civiora - My Profile</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4f4f4; color: #333; min-height: 100vh; }
+        
+        /* NAVBAR */
+        .navbar { padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; background: #ffffff; border-bottom: 1px solid #ddd; }
+        .navbar .brand { font-size: 22px; font-weight: 900; color: #b8860b; letter-spacing: 1px; }
+        .navbar a { color: #b8860b; text-decoration: none; font-size: 15px; font-weight: 700; margin-left: 20px; transition: 0.3s; cursor: pointer; }
+        .navbar a:hover { color: #1a1a1a; }
+        
+        /* BANNER */
+        .top-banner { background: linear-gradient(135deg, #bd9537 0%, #f9f295 50%, #b8860b 100%); padding: 40px 20px; text-align: center; color: #1a1a1a; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .top-banner h1 { font-size: 2.2rem; font-weight: 900; letter-spacing: 1px; }
+        
+        /* CONTENT */
+        .container { max-width: 600px; margin: 40px auto; padding: 0 20px; }
+        
+        .card { background: #fff; border-radius: 12px; padding: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #eee; }
+        
+        .profile-header { text-align: center; margin-bottom: 30px; }
+        .avatar { width: 80px; height: 80px; background: #fffdf5; border: 2px solid #b8860b; border-radius: 50%; font-size: 32px; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; color: #b8860b; font-weight: 800; }
+        .role-badge { display: inline-block; padding: 4px 14px; background: #f3e5f5; color: #6a1b9a; border-radius: 20px; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+        
+        /* FORM GROUPS */
+        .field-group { margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid #f0f0f0; }
+        .field-group:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        
+        .field-group label { display: block; font-size: 13px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+        
+        .input-row { display: flex; gap: 10px; }
+        .input-row input { flex: 1; padding: 12px 16px; border: 1.5px solid #ddd; border-radius: 8px; font-size: 15px; outline: none; transition: 0.2s; font-family: inherit; }
+        .input-row input:focus { border-color: #b8860b; background: #fffdf5; }
+        .input-row input:disabled { background: #f9f9f9; color: #666; font-weight: 600; cursor: not-allowed; }
+        
+        .btn-gold { padding: 0 20px; background: linear-gradient(135deg, #bd9537, #b8860b); color: #fff; border: none; border-radius: 8px; font-weight: 800; font-size: 13px; cursor: pointer; transition: 0.2s; white-space: nowrap; }
+        .btn-gold:hover { transform: translateY(-1px); box-shadow: 0 4px 10px rgba(184,134,11,0.3); }
+        .btn-gold:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+        
+        /* TOAST */
+        .toast { position: fixed; bottom: 30px; right: 30px; padding: 14px 24px; border-radius: 10px; font-size: 14px; font-weight: 600; color: #fff; background: #2e7d32; box-shadow: 0 6px 20px rgba(0,0,0,0.2); z-index: 9999; transform: translateY(80px); opacity: 0; transition: 0.3s ease; }
+        .toast.show { transform: translateY(0); opacity: 1; }
+        .toast.error { background: #c62828; }
+        
+        .readonly-info { font-size: 12px; color: #aaa; margin-top: 6px; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="brand">CIVIORA</div>
+    <div>
+        <a onclick="goDashboard()">🏠 Dashboard</a>
+        <a onclick="logout()">Logout</a>
+    </div>
+</nav>
+
+<div class="top-banner">
+    <h1>👤 My Profile</h1>
+</div>
+
+<div class="container">
+    <div class="card">
+        <div class="profile-header">
+            <div class="avatar" id="avatarInitials">?</div>
+            <div class="role-badge" id="roleBadge">Loading...</div>
+        </div>
+        
+        <!-- Editable field: Name -->
+        <div class="field-group">
+            <label>Full Name</label>
+            <div class="input-row">
+                <input type="text" id="val-name" placeholder="Loading...">
+                <button class="btn-gold" onclick="updateField('name')" id="btn-name">Update</button>
+            </div>
+        </div>
+
+        <!-- Editable field: Email -->
+        <div class="field-group">
+            <label>Email Address</label>
+            <div class="input-row">
+                <input type="email" id="val-email" placeholder="Loading...">
+                <button class="btn-gold" onclick="updateField('email')" id="btn-email">Update</button>
+            </div>
+        </div>
+
+        <!-- Editable field: Password -->
+        <div class="field-group">
+            <label>New Password</label>
+            <div class="input-row">
+                <input type="password" id="val-password" placeholder="Enter new password to change">
+                <button class="btn-gold" onclick="updateField('password')" id="btn-password">Update</button>
+            </div>
+        </div>
+
+        <!-- Readonly fields: Wing & Flat -->
+        <div class="field-group">
+            <label>Apartment Details</label>
+            <div class="input-row">
+                <input type="text" id="val-apt" disabled value="Loading...">
+            </div>
+            <div class="readonly-info">Wing and Flat details cannot be changed. Contact admin for modifying apartment details.</div>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+    const userId = parseInt(localStorage.getItem("userId") || "0");
+    const role = localStorage.getItem("role") || "Resident";
+
+    if (!userId) {
+        window.location.href = "login.html";
+    }
+
+    // Initialize UI
+    document.getElementById("roleBadge").textContent = role;
+    
+    // Fetch current user details
+    async function loadProfile() {
+        try {
+            const res = await fetch(`http://localhost:8080/user/${userId}`);
+            if(res.ok) {
+                const user = await res.json();
+                document.getElementById('val-name').value = user.name || "";
+                document.getElementById('val-email').value = user.email || "";
+                document.getElementById('val-apt').value = `Wing ${user.wing} - Flat ${user.flat}`;
+                
+                // Set avatar initials
+                const initials = (user.name || "U").split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase();
+                document.getElementById('avatarInitials').textContent = initials;
+            } else {
+                toast("Could not load profile data", "error");
+            }
+        } catch(e) {
+            toast("Connection error", "error");
+        }
+    }
+
+    async function updateField(key) {
+        const input = document.getElementById("val-" + key);
+        const value = input.value.trim();
+        const btn = document.getElementById("btn-" + key);
+
+        if(!value) {
+            toast(`Please enter a valid ${key}`, "error");
+            return;
+        }
+
+        const payload = {
+            id: userId,
+            key: key,
+            value: value
+        };
+
+        btn.disabled = true;
+        btn.textContent = "Saving...";
+
+        try {
+            const response = await fetch("http://localhost:8080/update", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+
+            const result = await response.text();
+            
+            if(result === "Updated Successfully") {
+                toast(`✅ ${key.charAt(0).toUpperCase() + key.slice(1)} updated successfully!`);
+                if(key === 'password') input.value = ''; // clear password after update
+                if(key === 'name') loadProfile(); // reload to update avatar
+            } else {
+                toast(`⚠️ ${result}`, "error");
+            }
+        } catch (e) {
+            toast("Error updating profile", "error");
+        } finally {
+            btn.disabled = false;
+            btn.textContent = "Update";
+        }
+    }
+
+    function toast(msg, type="success") {
+        const t = document.getElementById("toast");
+        t.textContent = msg;
+        t.className = `toast show ${type==="error"?"error":""}`;
+        setTimeout(() => t.classList.remove("show"), 3500);
+    }
+
+    function goDashboard() {
+        if(['admin','secretary','treasurer','chairman'].includes(role.toLowerCase())) {
+            window.location.href = "admin.html";
+        } else {
+            window.location.href = "dashboard.html";
+        }
+    }
+
+    function logout() {
+        localStorage.clear();
+        window.location.href = "login.html";
+    }
+
+    // Load data on start
+    loadProfile();
+</script>
+</body>
+</html>

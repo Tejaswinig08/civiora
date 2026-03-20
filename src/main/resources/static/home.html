@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Civiora - Home</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            /* Using Cream Beige for the background to feel spacious */
+            background-color: #EFE6D8;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 450px;
+            background: white;
+            border-radius: 16px;
+            /* Dark Brown shadow for elegant depth */
+            box-shadow: 0 20px 60px rgba(58, 46, 42, 0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            /* Forest Green for a premium, trustworthy header */
+            background: #1E3932;
+            padding: 40px 30px;
+            text-align: center;
+            color: #EFE6D8;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 5px;
+            letter-spacing: 1px;
+            /* Brushed Gold for the brand name */
+            color: #B89B5E;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+            color: #EFE6D8;
+        }
+
+        .content {
+            padding: 40px 30px;
+            /* Subtle gradient to Cream Beige */
+            background: linear-gradient(to bottom, #ffffff, #EFE6D8);
+        }
+
+        .home-content {
+            text-align: center;
+        }
+
+        .home-content h2 {
+            /* Dark Brown for stability and readability */
+            color: #3A2E2A;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .home-content p {
+            color: #3A2E2A;
+            opacity: 0.8;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary {
+            /* Brushed Gold for the main CTA */
+            background: #B89B5E;
+            color: #1E3932;
+        }
+
+        .btn-primary:hover {
+            background: #a38952;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(184, 155, 94, 0.4);
+        }
+
+        .btn-secondary {
+            /* Forest Green outline for secondary action */
+            background: transparent;
+            border: 2px solid #1E3932;
+            color: #1E3932;
+        }
+
+        .btn-secondary:hover {
+            background: #1E3932;
+            color: #EFE6D8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Civiora</h1>
+            <p>Built for Better Society Living</p>
+        </div>
+
+        <div class="content">
+            <div class="home-content">
+                <h2>Welcome to Civiora</h2>
+                <p>Enhancing communication within residential societies and making community living more transparent and efficient.</p>
+                
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="window.location.href='login.html'">Login</button>
+                    <button class="btn btn-secondary" onclick="window.location.href='signup.html'">Sign Up</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

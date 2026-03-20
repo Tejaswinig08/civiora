@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Civiora - Luxury Society Living</title>
+    <style>
+        /* --- 1. Color Palette & Variables --- */
+        :root {
+            --bg-color: #EFE6D8;
+            /* Cream Beige */
+            --text-primary: #1E3932;
+            /* Forest Green */
+            --brushed-gold: #B89B5E;
+            --dark-brown: #3A2E2A;
+        }
+
+        /* --- 2. Global Resets --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--brushed-gold) 0%, var(--bg-color) 50%, var(--brushed-gold) 100%);
+            background-size: 200% 200%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            animation: shineBG 8s ease infinite;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* --- 3. Page Containers --- */
+        .page-section {
+            transition: opacity 0.8s ease, transform 0.8s ease;
+            position: absolute;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .hidden {
+            display: none !important;
+            opacity: 0;
+            transform: scale(0.95);
+        }
+
+        /* --- 4. Logo Page Specifics --- */
+        .logo-container {
+            text-align: center;
+            z-index: 2;
+        }
+
+        .logo-wrapper {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 30px auto;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+        }
+
+        .building {
+            width: 30px;
+            background: var(--dark-brown);
+            border: 2px solid var(--bg-color);
+            border-bottom: none;
+            position: absolute;
+            bottom: 0;
+            transform-origin: bottom;
+            box-shadow: 0 10px 20px rgba(58, 46, 42, 0.3);
+        }
+
+        .b-left {
+            height: 60px;
+            left: 20px;
+            animation: buildUp 1s ease-out forwards 0.5s;
+            transform: scaleY(0);
+        }
+
+        .b-center {
+            height: 90px;
+            left: 50%;
+            transform: translateX(-50%) scaleY(0);
+            width: 40px;
+            z-index: 2;
+            background: linear-gradient(to bottom, var(--brushed-gold), var(--dark-brown));
+            animation: buildUpCenter 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards 0.2s;
+        }
+
+        .b-right {
+            height: 50px;
+            right: 20px;
+            animation: buildUp 1s ease-out forwards 0.7s;
+            transform: scaleY(0);
+        }
+
+        .roof {
+            position: absolute;
+            top: 10px;
+            width: 100px;
+            height: 40px;
+            border-top: 3px solid var(--text-primary);
+            border-radius: 50% 50% 0 0;
+            opacity: 0;
+            animation: fadeInDown 1.5s ease forwards 1.2s;
+        }
+
+        .logo-container h1 {
+            font-family: 'Georgia', serif;
+            font-size: 3.5rem;
+            color: var(--text-primary);
+            opacity: 0;
+            animation: slideUpFade 1s ease forwards 1.5s;
+        }
+
+        .logo-container h1 span {
+            color: var(--dark-brown);
+            font-weight: 700;
+        }
+
+        .tagline {
+            font-size: 1rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--dark-brown);
+            font-weight: 600;
+            opacity: 0;
+            margin-top: 10px;
+            animation: fadeIn 1.5s ease forwards 2s;
+        }
+
+        .cta-btn {
+            margin-top: 40px;
+            padding: 15px 40px;
+            background: transparent;
+            border: 2px solid var(--text-primary);
+            color: var(--text-primary);
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            opacity: 0;
+            animation: fadeIn 1s ease forwards 2.5s;
+        }
+
+        .cta-btn:hover {
+            background: var(--text-primary);
+            color: var(--bg-color);
+        }
+
+        /* --- 5. Home Page Card Specifics --- */
+        .home-card {
+            width: 90%;
+            max-width: 450px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(58, 46, 42, 0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: var(--text-primary);
+            padding: 40px 30px;
+            text-align: center;
+            color: var(--bg-color);
+        }
+
+        .header h1 {
+            font-size: 32px;
+            color: var(--brushed-gold);
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .content {
+            padding: 40px 30px;
+            background: linear-gradient(to bottom, #ffffff, var(--bg-color));
+            text-align: center;
+        }
+
+        .home-content h2 {
+            color: var(--dark-brown);
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .home-content p {
+            color: var(--dark-brown);
+            opacity: 0.8;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .btn-primary {
+            background: var(--brushed-gold);
+            color: var(--text-primary);
+        }
+
+        .btn-primary:hover {
+            background: #a38952;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid var(--text-primary);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--text-primary);
+            color: var(--bg-color);
+        }
+
+        /* --- 6. Animations --- */
+        @keyframes shineBG {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        @keyframes buildUp {
+            from {
+                transform: scaleY(0);
+            }
+
+            to {
+                transform: scaleY(1);
+            }
+        }
+
+        @keyframes buildUpCenter {
+            from {
+                transform: translateX(-50%) scaleY(0);
+            }
+
+            to {
+                transform: translateX(-50%) scaleY(1);
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideUpFade {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="logo-section" class="page-section">
+        <div class="logo-container">
+            <div class="logo-wrapper">
+                <div class="roof"></div>
+                <div class="building b-left"></div>
+                <div class="building b-center"></div>
+                <div class="building b-right"></div>
+            </div>
+            <h1><span>C</span>iviora</h1>
+            <p class="tagline">Built for Better Society Living!</p>
+            <button class="cta-btn" onclick="enterSite()">Welcome Home</button>
+        </div>
+    </div>
+
+    <div id="home-section" class="page-section hidden">
+        <div class="home-card">
+            <div class="header">
+                <h1>Civiora</h1>
+                <p>Built for Better Society Living</p>
+            </div>
+            <div class="content">
+                <div class="home-content">
+                    <h2>Welcome to Civiora</h2>
+                    <p>Enhancing communication within residential societies and making community living more transparent
+                        and efficient.</p>
+                    <div class="btn-group">
+                        <button class="btn btn-primary" onclick="window.location.href='login.html'">Login</button>
+                        <button class="btn btn-secondary" onclick="window.location.href='signup.html'">Sign Up</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function enterSite() {
+            const logoSec = document.getElementById('logo-section');
+            const homeSec = document.getElementById('home-section');
+
+            // 1. Start the fade out of logo section
+            logoSec.style.opacity = '0';
+            logoSec.style.transform = 'scale(1.1)';
+
+            setTimeout(() => {
+                // 2. Hide logo completely and show home section structure
+                logoSec.classList.add('hidden');
+                homeSec.classList.remove('hidden');
+
+                // 3. Small delay to trigger the reveal animation
+                setTimeout(() => {
+                    homeSec.style.opacity = '1';
+                    homeSec.style.transform = 'scale(1)';
+                }, 50);
+            }, 800); // Matches the transition time
+        }
+    </script>
+</body>
+
+</html>

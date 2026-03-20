@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Civiora – Admin Panel</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4f4f4; color: #333; min-height: 100vh; }
+        .navbar { padding: 14px 30px; display: flex; justify-content: space-between; align-items: center; background: #ffffff; border-bottom: 1px solid #ddd; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+        .navbar-brand { font-size: 22px; font-weight: 900; letter-spacing: 2px; color: #b8860b; }
+        .navbar-brand span { font-size: 12px; font-weight: 600; color: #888; display: block; letter-spacing: 1px; text-transform: uppercase; }
+        .navbar-links a { color: #b8860b; text-decoration: none; font-size: 14px; font-weight: 700; margin-left: 22px; transition: 0.3s; cursor: pointer; }
+        .navbar-links a:hover { color: #1a1a1a; }
+        .top-banner { background: linear-gradient(135deg, #bd9537 0%, #f9f295 50%, #b8860b 100%); padding: 40px 40px 30px; color: #1a1a1a; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .top-banner h1 { font-size: 2rem; font-weight: 900; letter-spacing: 1px; }
+        .top-banner p { font-size: 13px; font-weight: 600; opacity: 0.75; margin-top: 3px; }
+        .layout { display: flex; min-height: calc(100vh - 160px); }
+        .sidebar { width: 230px; background: #fff; border-right: 1px solid #eee; padding: 20px 0; flex-shrink: 0; box-shadow: 2px 0 8px rgba(0,0,0,0.04); }
+        .sidebar-item { display: flex; align-items: center; gap: 12px; padding: 13px 24px; font-size: 14px; font-weight: 600; color: #555; cursor: pointer; border-left: 3px solid transparent; transition: 0.2s; }
+        .sidebar-item:hover { background: #fffdf5; color: #b8860b; }
+        .sidebar-item.active { background: #fffdf5; color: #b8860b; border-left-color: #b8860b; }
+        .sidebar-item .icon { font-size: 18px; }
+        .sidebar-divider { height: 1px; background: #f0f0f0; margin: 10px 16px; }
+        .main { flex: 1; padding: 30px 36px; overflow-x: hidden; }
+        .section { display: none; }
+        .section.active { display: block; }
+        .page-title { font-size: 1.4rem; font-weight: 800; color: #1a1a1a; margin-bottom: 22px; display: flex; align-items: center; gap: 10px; }
+        .page-title span { font-size: 22px; }
+        .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 18px; margin-bottom: 28px; }
+        .stat-card { background: #fff; border-radius: 12px; padding: 20px 22px; border: 1px solid #eee; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border-top: 3px solid #b8860b; transition: transform 0.2s; }
+        .stat-card:hover { transform: translateY(-2px); }
+        .stat-card .stat-label { font-size: 12px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 0.5px; }
+        .stat-card .stat-value { font-size: 1.8rem; font-weight: 900; color: #1a1a1a; margin-top: 6px; }
+        .stat-card .stat-sub { font-size: 11px; color: #b8860b; font-weight: 600; margin-top: 4px; }
+        .controls { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
+        .controls input, .controls select { padding: 9px 14px; border: 1.5px solid #ddd; border-radius: 7px; font-size: 13px; outline: none; transition: 0.2s; }
+        .controls input { flex: 1; min-width: 180px; }
+        .controls input:focus, .controls select:focus { border-color: #b8860b; background: #fffdf5; }
+        .btn-gold { padding: 9px 20px; background: linear-gradient(135deg, #bd9537 0%, #f9f295 50%, #b8860b 100%); color: #1a1a1a; border: none; border-radius: 7px; font-weight: 800; font-size: 13px; cursor: pointer; box-shadow: 0 3px 10px rgba(184,134,11,0.3); transition: 0.2s; white-space: nowrap; }
+        .btn-gold:hover { transform: translateY(-1px); box-shadow: 0 5px 15px rgba(184,134,11,0.45); }
+        .btn-dark { padding: 9px 18px; background: #1a1a1a; color: #f9f295; border: none; border-radius: 7px; font-weight: 700; font-size: 13px; cursor: pointer; transition: 0.2s; white-space: nowrap; }
+        .btn-dark:hover { background: #333; }
+        .btn-danger { padding: 7px 14px; background: #fff0f0; color: #c62828; border: 1px solid #ffcdd2; border-radius: 6px; font-weight: 700; font-size: 12px; cursor: pointer; transition: 0.2s; }
+        .btn-danger:hover { background: #c62828; color: #fff; }
+        .btn-view { padding: 7px 14px; background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; border-radius: 6px; font-weight: 700; font-size: 12px; cursor: pointer; transition: 0.2s; }
+        .btn-view:hover { background: #2e7d32; color: #fff; }
+        .btn-outline { padding: 7px 14px; background: transparent; color: #b8860b; border: 1.5px solid #b8860b; border-radius: 6px; font-weight: 700; font-size: 12px; cursor: pointer; transition: 0.2s; }
+        .btn-outline:hover { background: #b8860b; color: #fff; }
+        .table-box { background: #fff; border-radius: 12px; border: 1px solid #eee; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .table-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 22px; border-bottom: 1px solid #f0f0f0; }
+        .table-header h3 { font-size: 15px; font-weight: 800; color: #1a1a1a; }
+        .table-header .total { font-size: 13px; color: #b8860b; font-weight: 700; }
+        table { width: 100%; border-collapse: collapse; }
+        thead tr { background: linear-gradient(135deg, #bd9537 0%, #f9f295 50%, #b8860b 100%); }
+        thead th { padding: 12px 16px; text-align: left; font-size: 12px; font-weight: 800; color: #1a1a1a; text-transform: uppercase; letter-spacing: 0.5px; }
+        tbody tr { border-bottom: 1px solid #f8f8f8; transition: background 0.15s; }
+        tbody tr:hover { background: #fffdf5; }
+        tbody td { padding: 12px 16px; font-size: 13px; color: #444; }
+        .id-cell { color: #b8860b; font-weight: 700; }
+        .actions-cell { display: flex; gap: 8px; align-items: center; }
+        .badge { padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+        .badge-owner     { background: #fff8e1; color: #b8860b; }
+        .badge-secretary { background: #e3f2fd; color: #1565c0; }
+        .badge-treasurer { background: #f3e5f5; color: #6a1b9a; }
+        .badge-chairman  { background: #e8f5e9; color: #2e7d32; }
+        .badge-paid      { background: #e8f5e9; color: #2e7d32; }
+        .badge-pending   { background: #fff3e0; color: #e65100; }
+        .badge-overdue   { background: #ffebee; color: #c62828; }
+        .badge-confirmed { background: #e8f5e9; color: #2e7d32; }
+        .badge-cancelled { background: #ffebee; color: #c62828; }
+        .badge-general   { background: #f3e5f5; color: #6a1b9a; }
+        .badge-maintenance { background: #e3f2fd; color: #1565c0; }
+        .badge-emergency { background: #ffebee; color: #c62828; }
+        .badge-event     { background: #e8f5e9; color: #2e7d32; }
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 999; justify-content: center; align-items: center; padding: 20px; }
+        .modal-overlay.open { display: flex; }
+        .modal-box { background: #fff; border-radius: 14px; width: 100%; max-width: 500px; box-shadow: 0 20px 60px rgba(0,0,0,0.25); overflow: hidden; }
+        .modal-head { background: linear-gradient(135deg, #bd9537 0%, #f9f295 50%, #b8860b 100%); padding: 18px 24px; display: flex; justify-content: space-between; align-items: center; }
+        .modal-head h3 { font-size: 16px; font-weight: 800; color: #1a1a1a; }
+        .modal-close { background: none; border: none; font-size: 20px; cursor: pointer; color: #1a1a1a; line-height: 1; }
+        .modal-body { padding: 24px; }
+        .modal-form-group { margin-bottom: 16px; }
+        .modal-form-group label { display: block; font-size: 12px; font-weight: 700; color: #555; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .modal-form-group input, .modal-form-group select, .modal-form-group textarea { width: 100%; padding: 10px 12px; border: 1.5px solid #ddd; border-radius: 7px; font-size: 13px; outline: none; transition: 0.2s; font-family: inherit; }
+        .modal-form-group textarea { resize: vertical; min-height: 80px; }
+        .modal-form-group input:focus, .modal-form-group select:focus, .modal-form-group textarea:focus { border-color: #b8860b; background: #fffdf5; }
+        .modal-form-row { display: flex; gap: 12px; }
+        .modal-form-row .modal-form-group { flex: 1; }
+        .modal-footer { padding: 16px 24px; border-top: 1px solid #f0f0f0; display: flex; gap: 10px; justify-content: flex-end; }
+        .toast { position: fixed; bottom: 28px; right: 28px; padding: 12px 22px; border-radius: 10px; font-size: 14px; font-weight: 600; color: #fff; background: #2e7d32; box-shadow: 0 6px 20px rgba(0,0,0,0.2); z-index: 9999; transform: translateY(80px); opacity: 0; transition: 0.35s ease; }
+        .toast.show { transform: translateY(0); opacity: 1; }
+        .toast.error { background: #c62828; }
+        .toast.info  { background: #b8860b; }
+        .empty { text-align: center; padding: 50px; color: #bbb; }
+        .empty .empty-icon { font-size: 44px; margin-bottom: 10px; }
+        .chat-layout { display: flex; gap: 20px; height: 520px; }
+        .chat-threads { width: 260px; background: #fff; border-radius: 12px; border: 1px solid #eee; overflow-y: auto; flex-shrink: 0; }
+        .chat-thread-head { padding: 14px 16px; font-size: 13px; font-weight: 800; color: #1a1a1a; border-bottom: 1px solid #f0f0f0; position: sticky; top: 0; background: #fff; }
+        .thread-item { padding: 12px 16px; cursor: pointer; border-bottom: 1px solid #f8f8f8; transition: 0.15s; }
+        .thread-item:hover, .thread-item.active { background: #fffdf5; }
+        .thread-item .t-name { font-size: 13px; font-weight: 700; color: #1a1a1a; }
+        .thread-item .t-preview { font-size: 11px; color: #888; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .thread-item .t-unread { display: inline-block; background: #b8860b; color: #fff; font-size: 10px; font-weight: 700; border-radius: 10px; padding: 1px 7px; float: right; margin-top: 2px; }
+        .chat-window { flex: 1; background: #fff; border-radius: 12px; border: 1px solid #eee; display: flex; flex-direction: column; overflow: hidden; }
+        .chat-win-head { padding: 14px 20px; background: linear-gradient(135deg, #bd9537 0%, #f9f295 50%, #b8860b 100%); font-weight: 800; font-size: 14px; color: #1a1a1a; display: flex; align-items: center; justify-content: space-between; }
+        .chat-messages { flex: 1; overflow-y: auto; padding: 18px; display: flex; flex-direction: column; gap: 12px; }
+        .msg-bubble { max-width: 75%; padding: 10px 14px; border-radius: 12px; font-size: 13px; line-height: 1.5; }
+        .msg-resident { background: #f0f0f0; align-self: flex-start; border-bottom-left-radius: 3px; }
+        .msg-admin { background: linear-gradient(135deg, #bd9537, #b8860b); color: #1a1a1a; align-self: flex-end; border-bottom-right-radius: 3px; font-weight: 600; }
+        .msg-sender { font-size: 10px; font-weight: 700; color: #888; margin-bottom: 3px; }
+        .msg-time   { font-size: 10px; color: #aaa; margin-top: 4px; text-align: right; }
+        .chat-input-row { padding: 14px 16px; border-top: 1px solid #f0f0f0; display: flex; gap: 10px; }
+        .chat-input-row input { flex: 1; padding: 10px 14px; border: 1.5px solid #ddd; border-radius: 8px; font-size: 13px; outline: none; transition: 0.2s; }
+        .chat-input-row input:focus { border-color: #b8860b; background: #fffdf5; }
+        .log-item { display: flex; align-items: flex-start; gap: 14px; padding: 14px 0; border-bottom: 1px solid #f8f8f8; }
+        .log-dot { width: 10px; height: 10px; border-radius: 50%; background: #b8860b; margin-top: 5px; flex-shrink: 0; }
+        .log-dot.red   { background: #c62828; }
+        .log-dot.green { background: #2e7d32; }
+        .log-dot.blue  { background: #1565c0; }
+        .log-text { font-size: 13px; color: #444; line-height: 1.5; }
+        .log-time { font-size: 11px; color: #aaa; margin-top: 2px; }
+        @media (max-width: 768px) {
+            .layout { flex-direction: column; }
+            .sidebar { width: 100%; display: flex; flex-wrap: wrap; padding: 8px; border-right: none; border-bottom: 1px solid #eee; }
+            .sidebar-item { flex: 1; min-width: 100px; border-left: none; border-bottom: 2px solid transparent; justify-content: center; }
+            .sidebar-item.active { border-bottom-color: #b8860b; border-left: none; }
+            .sidebar-divider { display: none; }
+            .main { padding: 20px 16px; }
+            .chat-layout { flex-direction: column; height: auto; }
+            .chat-threads { width: 100%; height: 180px; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="navbar-brand">CIVIORA<span>Administration Panel</span></div>
+    <div class="navbar-links">
+        <a onclick="showSection('overview')">🏠 Overview</a>
+        <a onclick="logout()">Logout</a>
+    </div>
+</nav>
+
+<div class="top-banner">
+    <h1>⚙️ Admin Dashboard</h1>
+    <p>Manage residents, notices, payments, bookings &amp; community chat</p>
+</div>
+
+<div class="layout">
+    <aside class="sidebar">
+        <div class="sidebar-item active" onclick="showSection('overview')" id="nav-overview"><span class="icon">📊</span> Overview</div>
+        <div class="sidebar-item" onclick="showSection('users')" id="nav-users"><span class="icon">👥</span> Users</div>
+        <div class="sidebar-divider"></div>
+        <div class="sidebar-item" onclick="showSection('notices')" id="nav-notices"><span class="icon">📢</span> E-Notices</div>
+        <div class="sidebar-item" onclick="showSection('payments')" id="nav-payments"><span class="icon">💳</span> Payments</div>
+        <div class="sidebar-item" onclick="showSection('bookings')" id="nav-bookings"><span class="icon">🏢</span> Bookings</div>
+        <div class="sidebar-divider"></div>
+        <div class="sidebar-item" onclick="showSection('chat')" id="nav-chat"><span class="icon">💬</span> Chat</div>
+        <div class="sidebar-item" onclick="showSection('activity')" id="nav-activity"><span class="icon">📜</span> Activity Log</div>
+    </aside>
+
+    <main class="main">
+
+        <!-- OVERVIEW -->
+        <div class="section active" id="sec-overview">
+            <div class="page-title"><span>📊</span> Overview</div>
+            <div class="stat-grid">
+                <div class="stat-card"><div class="stat-label">Total Residents</div><div class="stat-value" id="ov-users">–</div></div>
+                <div class="stat-card"><div class="stat-label">Total Balance</div><div class="stat-value" id="ov-balance">–</div></div>
+                <div class="stat-card"><div class="stat-label">Active Notices</div><div class="stat-value" id="ov-notices">–</div></div>
+                <div class="stat-card"><div class="stat-label">Bookings Today</div><div class="stat-value" id="ov-bookings">–</div></div>
+            </div>
+            <div class="table-box">
+                <div class="table-header"><h3>📜 Recent Activity</h3></div>
+                <div style="padding:6px 22px 16px;" id="ov-log"></div>
+            </div>
+        </div>
+
+        <!-- USERS -->
+        <div class="section" id="sec-users">
+            <div class="page-title"><span>👥</span> User Management</div>
+            <div class="controls">
+                <input type="text" id="userSearch" placeholder="🔍 Search by name / email / flat..." oninput="renderUsers()">
+                <select id="userRoleFilter" onchange="renderUsers()">
+                    <option value="all">All Roles</option>
+                    <option value="owner">Owner</option>
+                    <option value="secretary">Secretary</option>
+                    <option value="treasurer">Treasurer</option>
+                    <option value="chairman">Chairman</option>
+                </select>
+                <button class="btn-gold" onclick="openModal('addUserModal')">➕ Add Resident</button>
+            </div>
+            <div class="table-box">
+                <div class="table-header"><h3>All Residents</h3><span class="total" id="user-count"></span></div>
+                <table><thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Wing / Flat</th><th>Role</th><th>Actions</th></tr></thead><tbody id="userTableBody"></tbody></table>
+                <div class="empty" id="userEmpty" style="display:none;"><div class="empty-icon">👤</div><p>No residents found.</p></div>
+            </div>
+        </div>
+
+        <!-- NOTICES -->
+        <div class="section" id="sec-notices">
+            <div class="page-title"><span>📢</span> E-Notice Management</div>
+            <div class="controls">
+                <input type="text" id="noticeSearch" placeholder="🔍 Search notices..." oninput="renderNotices()">
+                <select id="noticeCatFilter" onchange="renderNotices()">
+                    <option value="all">All Categories</option>
+                    <option value="general">General</option>
+                    <option value="maintenance">Maintenance</option>
+                    <option value="event">Event</option>
+                    <option value="emergency">Emergency</option>
+                </select>
+                <button class="btn-gold" onclick="openModal('addNoticeModal')">📝 Post Notice</button>
+            </div>
+            <div class="table-box">
+                <div class="table-header"><h3>All Notices</h3><span class="total" id="notice-count"></span></div>
+                <table><thead><tr><th>ID</th><th>Title</th><th>Category</th><th>Priority</th><th>Date</th><th>Author</th><th>Actions</th></tr></thead><tbody id="noticeTableBody"></tbody></table>
+                <div class="empty" id="noticeEmpty" style="display:none;"><div class="empty-icon">📭</div><p>No notices found.</p></div>
+            </div>
+        </div>
+
+        <!-- PAYMENTS -->
+        <div class="section" id="sec-payments">
+            <div class="page-title"><span>💳</span> All Payments &amp; Transactions</div>
+            <div class="stat-grid">
+                <div class="stat-card"><div class="stat-label">Total Collected</div><div class="stat-value" id="pay-total">₹0</div></div>
+                <div class="stat-card"><div class="stat-label">Transactions</div><div class="stat-value" id="pay-paid" style="color:#2e7d32;">0</div></div>
+            </div>
+            <div class="controls">
+                <input type="text" id="paySearch" placeholder="🔍 Search descriptions or user ID..." oninput="renderPayments()">
+            </div>
+            <div class="table-box">
+                <div class="table-header"><h3>Transaction Records</h3><span class="total" id="pay-count"></span></div>
+                <table><thead><tr><th>ID</th><th>User ID</th><th>Amount</th><th>Date</th><th>Description</th><th>Balance</th></tr></thead><tbody id="payTableBody"></tbody></table>
+                <div class="empty" id="payEmpty" style="display:none;"><div class="empty-icon">💳</div><p>No payment records found.</p></div>
+            </div>
+        </div>
+
+        <!-- BOOKINGS -->
+        <div class="section" id="sec-bookings">
+            <div class="page-title"><span>🏢</span> Booking Management</div>
+            <div class="controls">
+                <input type="text" id="bookSearch" placeholder="🔍 Search bookings..." oninput="renderBookings()">
+                <select id="bookStatusFilter" onchange="renderBookings()">
+                    <option value="all">All Status</option>
+                    <option value="confirmed">Confirmed</option>
+                    <option value="cancelled">Cancelled</option>
+                </select>
+            </div>
+            <div class="table-box">
+                <div class="table-header"><h3>All Bookings</h3><span class="total" id="book-count"></span></div>
+                <table><thead><tr><th>ID</th><th>User ID</th><th>Facility</th><th>Date</th><th>Time</th><th>Amount</th><th>Status</th><th>Actions</th></tr></thead><tbody id="bookTableBody"></tbody></table>
+                <div class="empty" id="bookEmpty" style="display:none;"><div class="empty-icon">🏢</div><p>No bookings found.</p></div>
+            </div>
+        </div>
+
+        <!-- CHAT -->
+        <div class="section" id="sec-chat">
+            <div class="page-title"><span>💬</span> Community Chat</div>
+            <div class="chat-layout">
+                <div class="chat-threads">
+                    <div class="chat-thread-head">💬 All Messages</div>
+                    <div id="threadList"></div>
+                </div>
+                <div class="chat-window">
+                    <div class="chat-win-head">
+                        <span id="chatWinTitle">Community Chat Feed</span>
+                    </div>
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="empty" style="margin:auto;"><div class="empty-icon">💬</div><p>Loading messages...</p></div>
+                    </div>
+                    <div class="chat-input-row">
+                        <input type="text" id="adminMsgInput" placeholder="Reply as Admin..." onkeydown="if(event.key==='Enter') sendAdminMsg()">
+                        <button class="btn-gold" onclick="sendAdminMsg()">Send ➤</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ACTIVITY LOG -->
+        <div class="section" id="sec-activity">
+            <div class="page-title"><span>📜</span> Activity Log</div>
+            <div class="controls">
+                <input type="text" id="logSearch" placeholder="🔍 Search logs..." oninput="renderLog()">
+                <button class="btn-danger" onclick="clearLog()" style="padding:9px 18px;font-size:13px;">🗑 Clear All Logs</button>
+            </div>
+            <div class="table-box">
+                <div class="table-header"><h3>System Activity</h3><span class="total" id="log-count"></span></div>
+                <table><thead><tr><th>#</th><th>Action</th><th>Performed By</th><th>Date &amp; Time</th></tr></thead><tbody id="logTableBody"></tbody></table>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+<!-- ADD USER MODAL -->
+<div class="modal-overlay" id="addUserModal">
+    <div class="modal-box">
+        <div class="modal-head"><h3>➕ Add New Resident</h3><button class="modal-close" onclick="closeModal('addUserModal')">✕</button></div>
+        <div class="modal-body">
+            <div class="modal-form-group"><label>Full Name</label><input type="text" id="u-name" placeholder="e.g. Rahul Sharma"></div>
+            <div class="modal-form-group"><label>Email Address</label><input type="email" id="u-email" placeholder="rahul@gmail.com"></div>
+            <div class="modal-form-row">
+                <div class="modal-form-group"><label>Wing</label><input type="text" id="u-wing" placeholder="A" maxlength="2"></div>
+                <div class="modal-form-group"><label>Flat No.</label><input type="text" id="u-flat" placeholder="101"></div>
+            </div>
+            <div class="modal-form-group"><label>Password</label><input type="password" id="u-pass" placeholder="Set a password"></div>
+            <div class="modal-form-group"><label>Role</label>
+                <select id="u-role"><option value="owner">Owner</option><option value="admin">Admin</option><option value="secretary">Secretary</option><option value="treasurer">Treasurer</option><option value="chairman">Chairman</option></select>
+            </div>
+        </div>
+        <div class="modal-footer"><button class="btn-dark" onclick="closeModal('addUserModal')">Cancel</button><button class="btn-gold" onclick="addUser()">Add Resident</button></div>
+    </div>
+</div>
+
+<!-- ADD NOTICE MODAL -->
+<div class="modal-overlay" id="addNoticeModal">
+    <div class="modal-box">
+        <div class="modal-head"><h3>📝 Post New Notice</h3><button class="modal-close" onclick="closeModal('addNoticeModal')">✕</button></div>
+        <div class="modal-body">
+            <div class="modal-form-group"><label>Notice Title</label><input type="text" id="n-title" placeholder="e.g. Water Supply Interruption"></div>
+            <div class="modal-form-row">
+                <div class="modal-form-group"><label>Category</label>
+                    <select id="n-cat"><option value="general">General</option><option value="maintenance">Maintenance</option><option value="event">Event</option><option value="emergency">Emergency</option></select>
+                </div>
+                <div class="modal-form-group"><label>Priority</label>
+                    <select id="n-priority"><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option></select>
+                </div>
+            </div>
+            <div class="modal-form-group"><label>Summary</label><input type="text" id="n-summary" placeholder="Brief one-line summary..."></div>
+            <div class="modal-form-group"><label>Full Notice Content</label><textarea id="n-detail" placeholder="Write the full notice here..."></textarea></div>
+        </div>
+        <div class="modal-footer"><button class="btn-dark" onclick="closeModal('addNoticeModal')">Cancel</button><button class="btn-gold" onclick="addNotice()">Post Notice</button></div>
+    </div>
+</div>
+
+<!-- ADD PAYMENT MODAL -->
+<div class="modal-overlay" id="addPaymentModal">
+    <div class="modal-box">
+        <div class="modal-head"><h3>💳 Add Payment Record</h3><button class="modal-close" onclick="closeModal('addPaymentModal')">✕</button></div>
+        <div class="modal-body">
+            <div class="modal-form-group"><label>Resident Name</label><input type="text" id="p-name" placeholder="e.g. Rahul Sharma"></div>
+            <div class="modal-form-row">
+                <div class="modal-form-group"><label>Wing</label><input type="text" id="p-wing" placeholder="A" maxlength="2"></div>
+                <div class="modal-form-group"><label>Flat No.</label><input type="text" id="p-flat" placeholder="101"></div>
+            </div>
+            <div class="modal-form-row">
+                <div class="modal-form-group"><label>Amount (₹)</label><input type="number" id="p-amount" placeholder="2500"></div>
+                <div class="modal-form-group"><label>Month</label><input type="month" id="p-month"></div>
+            </div>
+            <div class="modal-form-group"><label>Status</label>
+                <select id="p-status"><option value="paid">Paid</option><option value="pending">Pending</option><option value="overdue">Overdue</option></select>
+            </div>
+        </div>
+        <div class="modal-footer"><button class="btn-dark" onclick="closeModal('addPaymentModal')">Cancel</button><button class="btn-gold" onclick="addPayment()">Save Record</button></div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API = 'http://localhost:8080/admin';
+const CHAT_API = 'http://localhost:8080';
+const ALLOWED = ['secretary','chairman','treasurer','admin'];
+
+const userRole = (localStorage.getItem('role')||'').toLowerCase();
+const adminUserId = parseInt(localStorage.getItem('userId')||'0');
+if (!adminUserId || !ALLOWED.includes(userRole)) {
+    alert('Access denied. Admins only.');
+    location.href = 'login.html';
+}
+
+// ── local state ──
+let allUsers=[], allNotices=[], allPayments=[], allBookings=[], allLogs=[], chatMsgs=[];
+let nextLogId=1;
+
+// ── NAVIGATION ──
+function showSection(name) {
+    document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+    document.querySelectorAll('.sidebar-item').forEach(s=>s.classList.remove('active'));
+    document.getElementById('sec-'+name).classList.add('active');
+    document.getElementById('nav-'+name).classList.add('active');
+    if(name==='overview') loadOverview();
+    if(name==='users')    loadUsers();
+    if(name==='notices')  loadNotices();
+    if(name==='payments') loadPayments();
+    if(name==='bookings') loadBookings();
+    if(name==='chat')     loadChat();
+    if(name==='activity') loadActivityLog();
+}
+
+// ── OVERVIEW ──
+async function loadOverview() {
+    try {
+        const [users,notices,transactions,bookings,logs] = await Promise.all([
+            fetch(`${API}/users`).then(r=>r.json()),
+            fetch(`${API}/notices`).then(r=>r.json()),
+            fetch(`${API}/transactions`).then(r=>r.json()),
+            fetch(`${API}/bookings`).then(r=>r.json()),
+            fetch(`${API}/logs`).then(r=>r.json()),
+        ]);
+        allUsers=users; allNotices=notices; allPayments=transactions; allBookings=bookings; allLogs=logs;
+        document.getElementById('ov-users').textContent = users.length;
+        document.getElementById('ov-balance').textContent = '₹'+transactions.reduce((s,t)=>s+t.amount,0).toLocaleString('en-IN');
+        // Removed pending total calculation
+        document.getElementById('ov-notices').textContent = notices.length;
+        document.getElementById('ov-bookings').textContent = bookings.length;
+        document.getElementById('ov-log').innerHTML = logs.slice(0,5).map(l=>`
+            <div class="log-item">
+                <div class="log-dot"></div>
+                <div><div class="log-text">${esc(l.action)}</div><div class="log-time">${esc(l.performedBy)} · ${fmtDT(l.createdAt)}</div></div>
+            </div>`).join('') || '<p style="padding:20px;color:#bbb;">No activity yet.</p>';
+    } catch(e) {
+        document.getElementById('ov-log').innerHTML='<p style="padding:20px;color:#bbb;">Could not connect to server.</p>';
+    }
+}
+
+// ── USERS ──
+async function loadUsers() {
+    try { allUsers = await fetch(`${API}/users`).then(r=>r.json()); } catch(e){}
+    renderUsers();
+}
+function renderUsers() {
+    const q=g('userSearch').value.toLowerCase(), rol=g('userRoleFilter').value;
+    const fil=allUsers.filter(u=>(u.name.toLowerCase().includes(q)||u.email.toLowerCase().includes(q)||u.flat.includes(q))&&(rol==='all'||u.role===rol));
+    g('user-count').textContent=`Total: ${fil.length}`;
+    g('userEmpty').style.display=fil.length?'none':'block';
+    g('userTableBody').innerHTML=fil.map(u=>`
+        <tr>
+            <td class="id-cell">#${u.id}</td>
+            <td><strong>${esc(u.name)}</strong></td>
+            <td>${esc(u.email)}</td>
+            <td>${esc(u.wing)}-${esc(u.flat)}</td>
+            <td><span class="badge badge-${u.role}">${cap(u.role)}</span></td>
+            <td class="actions-cell"><button class="btn-danger" onclick="deleteUser(${u.id},'${esc(u.name)}')">🗑 Delete</button></td>
+        </tr>`).join('');
+}
+async function addUser() {
+    const name=v('u-name'),email=v('u-email'),wing=v('u-wing'),flat=v('u-flat'),password=v('u-pass'),role=v('u-role');
+    if(!name||!email||!wing||!flat||!password) return toast('Fill all fields.','error');
+    const res=await fetch(`${API}/users`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,email,wing:wing.toUpperCase(),flat,password,role,balance:0})});
+    if(res.ok){toast('✅ Resident added!');closeModal('addUserModal');clearFields(['u-name','u-email','u-wing','u-flat','u-pass']);loadUsers();}
+    else toast('Error adding resident.','error');
+}
+async function deleteUser(id,name) {
+    if(!confirm(`Delete "${name}"?`)) return;
+    const res=await fetch(`${API}/users/${id}`,{method:'DELETE'});
+    if(res.ok){toast('🗑 Deleted.','info');loadUsers();}else toast('Error.','error');
+}
+
+// ── NOTICES ──
+async function loadNotices() {
+    try { allNotices=await fetch(`${API}/notices`).then(r=>r.json()); } catch(e){}
+    renderNotices();
+}
+function renderNotices() {
+    const q=g('noticeSearch').value.toLowerCase(), cat=g('noticeCatFilter').value;
+    const fil=allNotices.filter(n=>(n.title.toLowerCase().includes(q)||(n.summary||'').toLowerCase().includes(q))&&(cat==='all'||n.category===cat));
+    g('notice-count').textContent=`Total: ${fil.length}`;
+    g('noticeEmpty').style.display=fil.length?'none':'block';
+    g('noticeTableBody').innerHTML=fil.map(n=>`
+        <tr>
+            <td class="id-cell">#${n.id}</td>
+            <td><strong>${esc(n.title)}</strong></td>
+            <td><span class="badge badge-${n.category}">${cap(n.category)}</span></td>
+            <td style="font-weight:700;color:${n.priority==='high'?'#c62828':n.priority==='medium'?'#e65100':'#2e7d32'}">${cap(n.priority)}</td>
+            <td>${fmtDT(n.date)}</td>
+            <td>${esc(n.author)}</td>
+            <td class="actions-cell"><button class="btn-danger" onclick="deleteNotice(${n.id},'${esc(n.title)}')">🗑 Delete</button></td>
+        </tr>`).join('');
+}
+async function addNotice() {
+    const title=v('n-title'),summary=v('n-summary');
+    if(!title||!summary) return toast('Title and summary required.','error');
+    const body={title,category:v('n-cat'),priority:v('n-priority'),summary,detail:v('n-detail'),author:cap(userRole)};
+    const res=await fetch(`${API}/notices`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    if(res.ok){toast('✅ Notice posted!');closeModal('addNoticeModal');clearFields(['n-title','n-summary','n-detail']);loadNotices();}
+    else toast('Error.','error');
+}
+async function deleteNotice(id,title) {
+    if(!confirm(`Delete "${title}"?`)) return;
+    const res=await fetch(`${API}/notices/${id}`,{method:'DELETE'});
+    if(res.ok){toast('🗑 Deleted.','info');loadNotices();}else toast('Error.','error');
+}
+
+// ── PAYMENTS ──
+async function loadPayments() {
+    try { allPayments=await fetch(`${API}/transactions`).then(r=>r.json()); } catch(e){}
+    renderPayments();
+}
+function renderPayments() {
+    const q=g('paySearch')?.value.toLowerCase() || '';
+    const fil=allPayments.filter(p=>(String(p.userId).includes(q) || (p.description||'').toLowerCase().includes(q)));
+    g('pay-total').textContent='₹'+allPayments.reduce((s,p)=>s+p.amount,0).toLocaleString('en-IN');
+    g('pay-paid').textContent=allPayments.length;
+    g('pay-count').textContent=`Total: ${fil.length}`;
+    g('payEmpty').style.display=fil.length?'none':'block';
+    g('payTableBody').innerHTML=fil.map(p=>`
+        <tr>
+            <td class="id-cell">#${p.id}</td>
+            <td><strong>User ${p.userId}</strong></td>
+            <td style="font-weight:700;">₹${p.amount.toLocaleString('en-IN')}</td>
+            <td>${fmtDT(p.date)}</td>
+            <td>${esc(p.description)}</td>
+            <td>₹${p.currBalance}</td>
+        </tr>`).join('');
+}
+
+// ── BOOKINGS ──
+async function loadBookings() {
+    try { allBookings=await fetch(`${API}/bookings`).then(r=>r.json()); } catch(e){}
+    renderBookings();
+}
+function renderBookings() {
+    const q=g('bookSearch').value.toLowerCase(), st=g('bookStatusFilter').value;
+    const fil=allBookings.filter(b=>(b.facilityName.toLowerCase().includes(q)||String(b.userId).includes(q))&&(st==='all'||b.status===st));
+    g('book-count').textContent=`Total: ${fil.length}`;
+    g('bookEmpty').style.display=fil.length?'none':'block';
+    g('bookTableBody').innerHTML=fil.map(b=>`
+        <tr>
+            <td class="id-cell">#${b.id}</td>
+            <td>${b.userId}</td>
+            <td>${esc(b.facilityName.replace(/_/g,' ').toUpperCase())}</td>
+            <td>${b.bookingDate}</td>
+            <td>${esc(b.bookingTime)}</td>
+            <td>₹${b.amount}</td>
+            <td><span class="badge badge-${b.status||'confirmed'}">${cap(b.status||'confirmed')}</span></td>
+            <td class="actions-cell">
+                ${b.status!=='cancelled'?`<button class="btn-danger" onclick="cancelBooking(${b.id})">✕ Cancel</button>`:''}
+            </td>
+        </tr>`).join('');
+}
+async function confirmBooking(id){const res=await fetch(`${API}/bookings/${id}/confirm`,{method:'PATCH'});if(res.ok){toast('✅ Confirmed!');loadBookings();}else toast('Error.','error');}
+async function cancelBooking(id){if(!confirm('Cancel this booking?'))return;const res=await fetch(`${API}/bookings/${id}/cancel`,{method:'PATCH'});if(res.ok){toast('🗑 Cancelled.','info');loadBookings();}else toast('Error.','error');}
+
+// ── CHAT (real backend) ──
+let chatPoll=null;
+async function loadChat() {
+    if(chatPoll) clearInterval(chatPoll);
+    await fetchChatMsgs();
+    chatPoll=setInterval(fetchChatMsgs,3000);
+}
+async function fetchChatMsgs() {
+    try {
+        const msgs=await fetch(`${CHAT_API}/chat/messages`).then(r=>r.json());
+        chatMsgs=msgs;
+        renderChatThreads();
+        renderChatWindow();
+    } catch(e){}
+}
+function renderChatThreads() {
+    // Group by userId
+    const byUser={};
+    chatMsgs.forEach(m=>{
+        if(!byUser[m.userId]) byUser[m.userId]={name:m.senderName,role:m.role,msgs:[]};
+        byUser[m.userId].msgs.push(m);
+    });
+    g('threadList').innerHTML=Object.entries(byUser).map(([uid,data])=>`
+        <div class="thread-item" onclick="filterChatUser(${uid},'${esc(data.name)}')">
+            <div class="t-name">${esc(data.name)} <small style="color:#888;font-weight:400;">(${esc(data.role)})</small></div>
+            <div class="t-preview">${esc(data.msgs[data.msgs.length-1].message)}</div>
+        </div>`).join('') || '<div style="padding:16px;color:#bbb;font-size:13px;">No messages yet.</div>';
+}
+let chatFilter=null;
+function filterChatUser(uid,name){chatFilter=uid;g('chatWinTitle').textContent='💬 '+name;renderChatWindow();}
+function renderChatWindow() {
+    const msgs=chatFilter?chatMsgs.filter(m=>m.userId===chatFilter):chatMsgs;
+    const container=g('chatMessages');
+    if(!msgs.length){container.innerHTML='<div class="empty" style="margin:auto;"><div class="empty-icon">💬</div><p>No messages.</p></div>';return;}
+    container.innerHTML=msgs.map(m=>`
+        <div>
+            <div class="msg-sender">${esc(m.senderName)} · ${esc(m.role)}</div>
+            <div class="msg-bubble ${m.role==='ADMIN'?'msg-admin':'msg-resident'}">${esc(m.message)}</div>
+            <div class="msg-time">${fmtDT(m.sentAt)}</div>
+        </div>`).join('');
+    container.scrollTop=container.scrollHeight;
+}
+async function sendAdminMsg() {
+    const input=g('adminMsgInput'), text=input.value.trim();
+    if(!text) return;
+    await fetch(`${CHAT_API}/chat/send`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({userId:adminUserId,message:text})});
+    input.value='';
+    await fetchChatMsgs();
+}
+
+// ── ACTIVITY LOG ──
+async function loadActivityLog() {
+    try { allLogs=await fetch(`${API}/logs`).then(r=>r.json()); } catch(e){}
+    renderLog();
+}
+function renderLog() {
+    const q=g('logSearch').value.toLowerCase();
+    const fil=allLogs.filter(l=>l.action.toLowerCase().includes(q));
+    g('log-count').textContent=`Total: ${fil.length}`;
+    g('logTableBody').innerHTML=fil.map(l=>`
+        <tr>
+            <td class="id-cell">#${l.id}</td>
+            <td>${esc(l.action)}</td>
+            <td>${esc(l.performedBy)}</td>
+            <td>${fmtDT(l.createdAt)}</td>
+        </tr>`).join('') || '<tr><td colspan="4" style="text-align:center;padding:30px;color:#bbb;">No logs.</td></tr>';
+}
+async function clearLog() {
+    if(!confirm('Clear all logs?')) return;
+    const res=await fetch(`${API}/logs`,{method:'DELETE'});
+    if(res.ok){toast('Logs cleared.','info');loadActivityLog();}
+}
+
+// ── MODALS ──
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');}));
+
+// ── TOAST ──
+let _tt;
+function toast(msg,type='success'){const t=g('toast');t.textContent=msg;t.className=`toast show${type==='error'?' error':type==='info'?' info':''}`;clearTimeout(_tt);_tt=setTimeout(()=>t.classList.remove('show'),3000);}
+
+// ── UTILS ──
+const g=id=>document.getElementById(id);
+const v=id=>document.getElementById(id).value;
+const esc=s=>String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
+const fmtDT=iso=>iso?new Date(iso).toLocaleString('en-IN',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}):'–';
+const fmtMonth=m=>{if(!m)return'–';const[y,mo]=m.split('-');return new Date(y,mo-1).toLocaleDateString('en-IN',{month:'long',year:'numeric'});};
+function clearFields(ids){ids.forEach(id=>document.getElementById(id).value='');}
+function logout(){if(confirm('Logout?')){localStorage.clear();location.href='login.html';}}
+
+// ── INIT ──
+loadOverview();
+</script>
+</body>
+</html>

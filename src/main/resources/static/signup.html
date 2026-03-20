@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Civiora - Sign Up</title>
+    <style>
+        /* Standard CSS Block - Easy to Edit */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            width: 95%;
+            max-width: 450px;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            border: 1px solid #f0f0f0;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #bd9537 0%, #f9f295 25%, #e2b13c 50%, #f9f295 75%, #b8860b 100%);
+            padding: 25px;
+            text-align: center;
+            border-bottom: 3px solid #a67c00;
+        }
+
+        .header h1 { color: #1a1a1a; font-size: 32px; letter-spacing: 2px; font-weight: 800; }
+        .header p { color: #333; font-weight: 700; font-size: 12px; text-transform: uppercase; }
+
+        .content { padding: 30px; }
+        h2 { color: #333; margin-bottom: 20px; text-align: center; }
+
+        .form-group { margin-bottom: 15px; }
+        .form-row { display: flex; gap: 15px; }
+        
+        label { display: block; margin-bottom: 5px; font-size: 13px; font-weight: 700; color: #444; }
+        
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1.5px solid #ddd;
+            border-radius: 6px;
+            transition: 0.3s;
+            background-color: #fff;
+        }
+
+        input:focus { border-color: #bd9537; outline: none; background-color: #fffdf5; }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-top: 10px;
+            background: linear-gradient(135deg, #bd9537 0%, #f9f295 50%, #b8860b 100%);
+            color: #1a1a1a;
+            box-shadow: 0 4px 15px rgba(184, 134, 11, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(184, 134, 11, 0.5); }
+
+        .link { text-align: center; margin-top: 15px; font-size: 13px; color: #666; }
+        .link a { color: #b8860b; text-decoration: none; font-weight: 700; cursor: pointer; }
+
+        .message { padding: 10px; border-radius: 6px; margin-bottom: 15px; display: none; font-size: 13px; text-align: center; }
+        .message.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; display: block; }
+        .message.error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; display: block; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1>Civiora</h1>
+            <p>Build for better society living!!</p>
+        </div>
+
+        <div class="content">
+            <h2>Create Account</h2>
+            
+            <div id="signupMessage" class="message"></div>
+
+            <form id="signupForm">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="signupName" required placeholder="Enter your full name">
+                </div>
+
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="signupEmail" required placeholder="example@mail.com">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Wing</label>
+                        <input type="text" id="signupWing" required placeholder="A">
+                    </div>
+                    <div class="form-group">
+                        <label>Flat No.</label>
+                        <input type="text" id="signupFlat" required placeholder="101">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Member Type</label>
+                    <select id="signupRole" required>
+                        <option value="">Select Role</option>
+                        <option value="owner">Owner</option>
+                        <option value="secretary">Secretary</option>
+                        <option value="treasurer">Treasurer</option>
+                        <option value="chairman">Chairman</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="signupPassword" required>
+                </div>
+
+                <button type="submit" class="btn">Register Member</button>
+            </form>
+
+            <div class="link">
+                Already have an account? <a onclick="window.location.href='login.html'">Login</a>
+            </div>
+            <div class="link">
+                <a onclick="window.location.href='home.html'">← Back to Home</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const signupForm = document.getElementById("signupForm");
+        
+        const showMessage = (text, type) => {
+            const msg = document.getElementById("signupMessage");
+            msg.innerText = text;
+            msg.className = "message " + type;
+        };
+
+        signupForm.addEventListener("submit", (event) => {
+            event.preventDefault();
+
+            const signupData = {
+                name: document.getElementById("signupName").value,
+                email: document.getElementById("signupEmail").value,
+                wing: document.getElementById("signupWing").value,
+                flat: document.getElementById("signupFlat").value,
+                role: document.getElementById("signupRole").value,
+                password: document.getElementById("signupPassword").value
+            };
+
+            // Verified: Pointing to Port 8080
+            fetch("http://localhost:8080/register", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(signupData)
+            })
+            .then(response => response.text())
+            .then(result => {
+                // Adjusting check to be case-insensitive for better reliability
+                if (result.toLowerCase().includes("successfully")) {
+                    showMessage("Member registered successfully!", "success");
+                    setTimeout(() => window.location.href = "login.html", 2000);
+                } else {
+                    showMessage(result, "error");
+                }
+            })
+            .catch(error => {
+                showMessage("Connection error. Is your Spring Boot server running on 8080?", "error");
+                console.error("Fetch Error:", error);
+            });
+        });
+    </script>
+</body>
+</html>

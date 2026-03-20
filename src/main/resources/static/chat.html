@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Civiora - Community Chat</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            padding: 15px 25px;
+            text-align: right;
+            background: #fff;
+            border-bottom: 1px solid #ddd;
+            flex-shrink: 0;
+        }
+        .navbar a {
+            color: #b8860b;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 700;
+            margin-left: 25px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .navbar a:hover { color: #1a1a1a; }
+
+        /* GOLD HEADER */
+        .top {
+            text-align: center;
+            padding: 35px 20px;
+            background: linear-gradient(135deg, #bd9537 0%, #f9f295 50%, #b8860b 100%);
+            color: #1a1a1a;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            flex-shrink: 0;
+        }
+        .top h1 { font-size: 2rem; font-weight: 900; letter-spacing: 2px; }
+        .top p { font-size: 0.95rem; margin-top: 6px; font-weight: 600; }
+
+        /* CHAT WRAPPER */
+        .chat-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            max-width: 850px;
+            width: 100%;
+            margin: 25px auto;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+            overflow: hidden;
+            border: 1px solid #eee;
+        }
+
+        /* MESSAGES AREA */
+        .messages-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 25px 20px;
+            height: 500px;
+            background: #fafafa;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        /* DATE DIVIDER */
+        .date-divider {
+            text-align: center;
+            font-size: 11px;
+            color: #aaa;
+            font-weight: 600;
+            letter-spacing: 1px;
+            position: relative;
+            margin: 6px 0;
+        }
+        .date-divider::before, .date-divider::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 38%;
+            height: 1px;
+            background: #e0e0e0;
+        }
+        .date-divider::before { left: 0; }
+        .date-divider::after { right: 0; }
+
+        /* CHAT BUBBLE */
+        .bubble-row {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+            animation: fadeIn 0.35s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .bubble-row.mine { flex-direction: row-reverse; }
+
+        /* AVATAR */
+        .avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 800;
+            flex-shrink: 0;
+            color: #fff;
+        }
+        .avatar.user-avatar { background: linear-gradient(135deg, #b8860b, #f9f295); color: #1a1a1a; }
+        .avatar.admin-avatar { background: linear-gradient(135deg, #1565c0, #42a5f5); }
+
+        /* BUBBLE */
+        .bubble-content { max-width: 65%; }
+
+        .bubble-meta {
+            font-size: 11px;
+            color: #999;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .bubble-row.mine .bubble-meta { justify-content: flex-end; }
+
+        .role-badge {
+            font-size: 9px;
+            font-weight: 800;
+            padding: 2px 6px;
+            border-radius: 10px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        .role-badge.user  { background: #fff8e1; color: #b8860b; border: 1px solid #e2b13c; }
+        .role-badge.admin { background: #e3f2fd; color: #1565c0; border: 1px solid #90caf9; }
+
+        .bubble {
+            padding: 12px 16px;
+            border-radius: 18px;
+            font-size: 14px;
+            line-height: 1.5;
+            word-break: break-word;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .bubble-row:not(.mine) .bubble {
+            background: #fff;
+            border: 1px solid #eee;
+            border-bottom-left-radius: 4px;
+            color: #333;
+        }
+        .bubble-row.mine .bubble {
+            background: linear-gradient(135deg, #bd9537, #b8860b);
+            color: #fff;
+            border-bottom-right-radius: 4px;
+        }
+
+        .bubble-time {
+            font-size: 10px;
+            color: #bbb;
+            margin-top: 4px;
+            text-align: right;
+        }
+        .bubble-row:not(.mine) .bubble-time { text-align: left; }
+
+        /* EMPTY STATE */
+        .empty-state {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #ccc;
+            gap: 10px;
+            font-size: 15px;
+        }
+        .empty-state span { font-size: 48px; }
+
+        /* INPUT AREA */
+        .input-area {
+            display: flex;
+            gap: 10px;
+            padding: 16px 20px;
+            border-top: 1px solid #eee;
+            background: #fff;
+            flex-shrink: 0;
+            align-items: flex-end;
+        }
+
+        .input-area textarea {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            font-size: 14px;
+            font-family: inherit;
+            resize: none;
+            outline: none;
+            transition: border 0.2s;
+            max-height: 100px;
+            min-height: 46px;
+            overflow-y: auto;
+        }
+        .input-area textarea:focus { border-color: #bd9537; background: #fffdf5; }
+        .input-area textarea::placeholder { color: #bbb; }
+
+        .send-btn {
+            padding: 12px 22px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #bd9537 0%, #b8860b 100%);
+            color: #fff;
+            font-weight: 800;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 3px 12px rgba(184, 134, 11, 0.4);
+            white-space: nowrap;
+        }
+        .send-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 16px rgba(184, 134, 11, 0.6); }
+        .send-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+        .char-info {
+            font-size: 11px;
+            color: #bbb;
+            text-align: right;
+            padding: 0 4px;
+        }
+
+        /* NOTIFICATION */
+        .notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-30px);
+            padding: 12px 28px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.4s;
+            z-index: 9999;
+        }
+        .notification.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+        .notification.error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+
+        @media (max-width: 600px) {
+            .chat-wrapper { margin: 10px; border-radius: 10px; }
+            .messages-area { height: 360px; }
+            .bubble-content { max-width: 82%; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="notification" class="notification"></div>
+
+    <div class="navbar">
+        <a onclick="location.href='dashboard.html'">🏠 Dashboard</a>
+        <a onclick="logout()">Logout</a>
+    </div>
+
+    <div class="top">
+        <h1>💬 Community Chat</h1>
+        <p>Talk to your neighbours and society admins</p>
+    </div>
+
+    <div class="chat-wrapper">
+        <div class="messages-area" id="messagesArea">
+            <div class="empty-state" id="emptyState">
+                <span>💬</span>
+                <p>No messages yet. Be the first to say something!</p>
+            </div>
+        </div>
+
+        <div class="input-area">
+            <div style="flex:1; display:flex; flex-direction:column; gap:4px;">
+                <textarea id="msgInput" placeholder="Type your message..." maxlength="500"
+                    oninput="updateCharCount()" onkeydown="handleKey(event)"></textarea>
+                <div class="char-info"><span id="charCount">0</span>/500</div>
+            </div>
+            <button class="send-btn" id="sendBtn" onclick="sendMessage()">Send ➤</button>
+        </div>
+    </div>
+
+    <script>
+        const userId = parseInt(localStorage.getItem('userId') || '0');
+        let lastMessageId = 0;
+        let pollInterval = null;
+
+        if (!userId) {
+            alert('Please login first!');
+            location.href = 'login.html';
+        }
+
+        // ─── LOAD ALL MESSAGES ────────────────────────────────────────
+        async function loadMessages() {
+            try {
+                const res = await fetch('http://localhost:8080/chat/messages');
+                const messages = await res.json();
+
+                const area = document.getElementById('messagesArea');
+                area.innerHTML = '';
+
+                if (!messages.length) {
+                    area.innerHTML = `<div class="empty-state"><span>💬</span><p>No messages yet. Be the first to say something!</p></div>`;
+                    return;
+                }
+
+                let lastDate = '';
+                messages.forEach(m => {
+                    const dateStr = formatDate(m.sentAt);
+                    if (dateStr !== lastDate) {
+                        area.insertAdjacentHTML('beforeend', `<div class="date-divider">${dateStr}</div>`);
+                        lastDate = dateStr;
+                    }
+                    area.insertAdjacentHTML('beforeend', buildBubble(m));
+                    lastMessageId = Math.max(lastMessageId, m.id);
+                });
+
+                scrollToBottom();
+            } catch (err) {
+                console.error('Failed to load messages', err);
+            }
+        }
+
+        // ─── POLL FOR NEW MESSAGES ────────────────────────────────────
+        async function pollMessages() {
+            try {
+                const res = await fetch(`http://localhost:8080/chat/messages/since/${lastMessageId}`);
+                const messages = await res.json();
+                if (!messages.length) return;
+
+                const area = document.getElementById('messagesArea');
+                // Remove empty state if present
+                const empty = area.querySelector('.empty-state');
+                if (empty) empty.remove();
+
+                messages.forEach(m => {
+                    area.insertAdjacentHTML('beforeend', buildBubble(m));
+                    lastMessageId = Math.max(lastMessageId, m.id);
+                });
+                scrollToBottom();
+            } catch (err) {
+                console.error('Polling error', err);
+            }
+        }
+
+        // ─── BUILD BUBBLE HTML ────────────────────────────────────────
+        function buildBubble(m) {
+            const isMine = (m.userId === userId);
+            const role = m.role ? m.role.toLowerCase() : 'user';
+            const initial = m.senderName ? m.senderName.charAt(0).toUpperCase() : '?';
+            const time = formatTime(m.sentAt);
+            const roleLabel = m.role === 'ADMIN' ? 'Admin' : 'Resident';
+
+            return `
+                <div class="bubble-row ${isMine ? 'mine' : ''}">
+                    <div class="avatar ${role === 'admin' ? 'admin-avatar' : 'user-avatar'}">${initial}</div>
+                    <div class="bubble-content">
+                        <div class="bubble-meta">
+                            <span>${isMine ? 'You' : escapeHtml(m.senderName)}</span>
+                            <span class="role-badge ${role}">${roleLabel}</span>
+                        </div>
+                        <div class="bubble">${escapeHtml(m.message)}</div>
+                        <div class="bubble-time">${time}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ─── SEND MESSAGE ─────────────────────────────────────────────
+        async function sendMessage() {
+            const input = document.getElementById('msgInput');
+            const text = input.value.trim();
+            if (!text) return;
+
+            const sendBtn = document.getElementById('sendBtn');
+            sendBtn.disabled = true;
+
+            try {
+                const res = await fetch('http://localhost:8080/chat/send', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId, message: text })
+                });
+                const data = await res.json();
+
+                if (data.status === 'success') {
+                    input.value = '';
+                    document.getElementById('charCount').textContent = '0';
+                    // Immediately poll for the new message
+                    await pollMessages();
+                } else {
+                    showNotification(data.message || 'Failed to send', 'error');
+                }
+            } catch (err) {
+                showNotification('Connection error.', 'error');
+            } finally {
+                sendBtn.disabled = false;
+                input.focus();
+            }
+        }
+
+        // Enter to send (Shift+Enter = new line)
+        function handleKey(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        }
+
+        // ─── UTILS ───────────────────────────────────────────────────
+        function scrollToBottom() {
+            const area = document.getElementById('messagesArea');
+            area.scrollTop = area.scrollHeight;
+        }
+
+        function updateCharCount() {
+            const v = document.getElementById('msgInput').value.length;
+            document.getElementById('charCount').textContent = v;
+        }
+
+        function formatDate(isoStr) {
+            const d = new Date(isoStr);
+            const today = new Date();
+            const yesterday = new Date(today);
+            yesterday.setDate(today.getDate() - 1);
+            if (d.toDateString() === today.toDateString()) return 'Today';
+            if (d.toDateString() === yesterday.toDateString()) return 'Yesterday';
+            return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+        }
+
+        function formatTime(isoStr) {
+            const d = new Date(isoStr);
+            return d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
+        }
+
+        function escapeHtml(str) {
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
+        function showNotification(message, type) {
+            const n = document.getElementById('notification');
+            n.textContent = message;
+            n.className = 'notification ' + type;
+            void n.offsetWidth;
+            n.classList.add('show');
+            setTimeout(() => n.classList.remove('show'), 3500);
+        }
+
+        function logout() {
+            localStorage.removeItem('userId');
+            localStorage.removeItem('role');
+            window.location.href = 'login.html';
+        }
+
+        // ─── INIT ─────────────────────────────────────────────────────
+        loadMessages();
+        pollInterval = setInterval(pollMessages, 3000);
+    </script>
+</body>
+</html>
