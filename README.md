@@ -62,9 +62,9 @@ mvn spring-boot:run
 http://localhost:8080 
 ```
 
-📡 API Architecture
-The system follows a modular RESTful API design, organized by domain for scalability and maintainability.
-
+##📡 API Architecture
+--The system follows a modular RESTful API design, organized by domain for scalability and maintainability.
+---
 ### 🔐 Authentication
 
 | Endpoint | Method | Description |
@@ -172,23 +172,33 @@ civiora/
 └── README.md
 ```
 
-🔒 Security
-OTP-based authentication (no password storage)
-Role-based access (admin / resident)
-Secure payment handling
-Input validation
+## 🔒 Security
 
-🎯 Problem Statement
+- OTP-based authentication (no password storage)  
+- Role-based access (admin / resident)  
+- Secure payment handling  
+- Input validation  
+
+---
+
+## 🎯 Problem Statement
+
 Residential society management often suffers from fragmented communication, manual payment verification, and lack of financial transparency. These inefficiencies lead to missed confirmations, delays, and administrative overhead.
+
 Civiora addresses these challenges by providing a centralized digital platform for payments, facility management, communication, and audit visibility—ensuring efficiency, transparency, and convenience for both residents and administrators.
 
-🎯 Workflows
-Resident:
-Login → Pay Maintenance → Book Facilities → View Notices → Chat
-Admin:
-Login → Post Notices → View Payments → Manage Bookings → Publish Audit Reports
+---
 
-🚀 Future Enhancements
-UPI payment gateway integration
-Real-time notifications (WebSockets)
-Mobile app version
+## 🎯 Workflows
+
+**Resident:**  
+Login → Pay Maintenance → Book Facilities → View Notices → Chat  
+**Admin:**  
+Login → Post Notices → View Payments → Manage Bookings → Publish Audit Reports  
+
+---
+
+## 🚀 Future Enhancements
+
+- UPI payment gateway integration  
+- Real-time notifications (WebSockets)  
