@@ -22,7 +22,7 @@ A full-stack society management platform that streamlines maintenance payments, 
 - Residents can raise complaints (e.g., water, electricity, maintenance)
 - Complaints categorized by priority (Low, Medium, High)
 - Admin can track, update status, and resolve issues
-- Transparent complaint lifecycle (Open → In Progress → Resolved)
+- Transparent complaint lifecycle (Open → Approve → Resolved)
 
 ---
 
