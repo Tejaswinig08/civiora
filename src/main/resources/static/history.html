@@ -300,10 +300,7 @@
                 const res = await fetch(`http://localhost:8080/passbook/${userId}`);
                 transactions = await res.json();
 
-                if (transactions.length > 0) {
-                    // First item is the latest (ordered by date desc)
-                    document.getElementById('currentBalance').textContent = transactions[0].currBalance;
-                }
+
 
                 render();
             } catch (err) {

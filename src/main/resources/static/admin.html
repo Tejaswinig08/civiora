@@ -156,6 +156,8 @@
         <div class="sidebar-item" onclick="showSection('payments')" id="nav-payments"><span class="icon">💳</span> Payments</div>
         <div class="sidebar-item" onclick="showSection('bookings')" id="nav-bookings"><span class="icon">🏢</span> Bookings</div>
         <div class="sidebar-divider"></div>
+        <div class="sidebar-item" onclick="showSection('complaints')" id="nav-complaints"><span class="icon">📋</span> Complaints</div>
+        <div class="sidebar-divider"></div>
         <div class="sidebar-item" onclick="showSection('chat')" id="nav-chat"><span class="icon">💬</span> Chat</div>
         <div class="sidebar-item" onclick="showSection('activity')" id="nav-activity"><span class="icon">📜</span> Activity Log</div>
     </aside>
@@ -251,6 +253,36 @@
                 <div class="table-header"><h3>All Bookings</h3><span class="total" id="book-count"></span></div>
                 <table><thead><tr><th>ID</th><th>User ID</th><th>Facility</th><th>Date</th><th>Time</th><th>Amount</th><th>Status</th><th>Actions</th></tr></thead><tbody id="bookTableBody"></tbody></table>
                 <div class="empty" id="bookEmpty" style="display:none;"><div class="empty-icon">🏢</div><p>No bookings found.</p></div>
+            </div>
+        </div>
+
+        <!-- COMPLAINTS -->
+        <div class="section" id="sec-complaints">
+            <div class="page-title"><span>📋</span> Complaints</div>
+            <div class="stat-grid">
+                <div class="stat-card"><div class="stat-label">Total</div><div class="stat-value" id="cmp-total">0</div></div>
+                <div class="stat-card"><div class="stat-label">Pending</div><div class="stat-value" id="cmp-pending" style="color:#e65100;">0</div></div>
+                <div class="stat-card"><div class="stat-label">Resolved</div><div class="stat-value" id="cmp-resolved" style="color:#2e7d32;">0</div></div>
+            </div>
+            <div class="controls">
+                <input type="text" id="cmpSearch" placeholder="🔍 Search complaints..." oninput="renderComplaints()">
+                <select id="cmpStatusFilter" onchange="renderComplaints()">
+                    <option value="all">All Status</option>
+                    <option value="PENDING">Pending</option>
+                    <option value="APPROVED">Approved</option>
+                    <option value="RESOLVED">Resolved</option>
+                </select>
+                <select id="cmpPriorityFilter" onchange="renderComplaints()">
+                    <option value="all">All Priority</option>
+                    <option value="HIGH">High</option>
+                    <option value="MEDIUM">Medium</option>
+                    <option value="LOW">Low</option>
+                </select>
+            </div>
+            <div class="table-box">
+                <div class="table-header"><h3>All Complaints</h3><span class="total" id="cmp-count"></span></div>
+                <table><thead><tr><th>ID</th><th>Resident</th><th>Subject</th><th>Priority</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead><tbody id="cmpTableBody"></tbody></table>
+                <div class="empty" id="cmpEmpty" style="display:none;"><div class="empty-icon">📋</div><p>No complaints found.</p></div>
             </div>
         </div>
 
@@ -371,7 +403,7 @@ if (!adminUserId || !ALLOWED.includes(userRole)) {
 }
 
 // ── local state ──
-let allUsers=[], allNotices=[], allPayments=[], allBookings=[], allLogs=[], chatMsgs=[];
+let allUsers=[], allNotices=[], allPayments=[], allBookings=[], allLogs=[], allComplaints=[], chatMsgs=[];
 let nextLogId=1;
 
 // ── NAVIGATION ──
@@ -380,13 +412,14 @@ function showSection(name) {
     document.querySelectorAll('.sidebar-item').forEach(s=>s.classList.remove('active'));
     document.getElementById('sec-'+name).classList.add('active');
     document.getElementById('nav-'+name).classList.add('active');
-    if(name==='overview') loadOverview();
-    if(name==='users')    loadUsers();
-    if(name==='notices')  loadNotices();
-    if(name==='payments') loadPayments();
-    if(name==='bookings') loadBookings();
-    if(name==='chat')     loadChat();
-    if(name==='activity') loadActivityLog();
+    if(name==='overview')   loadOverview();
+    if(name==='users')      loadUsers();
+    if(name==='notices')    loadNotices();
+    if(name==='payments')   loadPayments();
+    if(name==='bookings')   loadBookings();
+    if(name==='complaints') loadComplaints();
+    if(name==='chat')       loadChat();
+    if(name==='activity')   loadActivityLog();
 }
 
 // ── OVERVIEW ──
@@ -504,6 +537,57 @@ function renderPayments() {
             <td>${esc(p.description)}</td>
             <td>₹${p.currBalance}</td>
         </tr>`).join('');
+}
+
+// ── COMPLAINTS ──
+let allComplaints_data=[];
+async function loadComplaints() {
+    try { allComplaints=await fetch(`${API}/complaints`).then(r=>r.json()); } catch(e){}
+    renderComplaints();
+}
+function renderComplaints() {
+    const q   = (g('cmpSearch')?.value||'').toLowerCase();
+    const st  = g('cmpStatusFilter')?.value   || 'all';
+    const pri = g('cmpPriorityFilter')?.value || 'all';
+    const fil = allComplaints.filter(c=>
+        (st==='all'||c.status===st) &&
+        (pri==='all'||c.priority===pri) &&
+        (c.subject.toLowerCase().includes(q)||(c.senderName||'').toLowerCase().includes(q))
+    );
+    g('cmp-total').textContent    = allComplaints.length;
+    g('cmp-pending').textContent  = allComplaints.filter(c=>c.status==='PENDING').length;
+    g('cmp-resolved').textContent = allComplaints.filter(c=>c.status==='RESOLVED').length;
+    g('cmp-count').textContent    = `Total: ${fil.length}`;
+    g('cmpEmpty').style.display   = fil.length?'none':'block';
+    const priBadge = {HIGH:'#ffebee;color:#c62828', MEDIUM:'#fff3e0;color:#e65100', LOW:'#e8f5e9;color:#2e7d32'};
+    const stBadge  = {PENDING:'#f5f5f5;color:#757575', APPROVED:'#e3f2fd;color:#1565c0', RESOLVED:'#e8f5e9;color:#2e7d32'};
+    g('cmpTableBody').innerHTML = fil.map(c=>{
+        const rowBg    = c.status==='RESOLVED' ? 'background:#f1fff4;' : '';
+        const pStyle   = priBadge[c.priority]||'#eee;color:#333';
+        const sStyle   = stBadge[c.status]  ||'#eee;color:#333';
+        const approveBtn = c.status!=='APPROVED'&&c.status!=='RESOLVED'
+            ? `<button class="btn-outline" onclick="updateComplaintStatus(${c.id},'APPROVED')">Approve</button>` : '';
+        const resolveBtn = c.status!=='RESOLVED'
+            ? `<button class="btn-view" onclick="updateComplaintStatus(${c.id},'RESOLVED')" style="background:#e8f5e9;color:#2e7d32;border-color:#c8e6c9;">Resolve</button>` : '';
+        return `<tr style="${rowBg}">
+            <td class="id-cell">#${c.id}</td>
+            <td><strong>${esc(c.senderName||'User '+c.userId)}</strong></td>
+            <td>${esc(c.subject)}</td>
+            <td><span class="badge" style="background:${pStyle.split(';')[0]};${pStyle.split(';')[1]}">${c.priority}</span></td>
+            <td><span class="badge" style="background:${sStyle.split(';')[0]};${sStyle.split(';')[1]}">${c.status}</span></td>
+            <td>${fmtDT(c.createdAt)}</td>
+            <td class="actions-cell">${approveBtn}${resolveBtn}</td>
+        </tr>`;
+    }).join('');
+}
+async function updateComplaintStatus(id, status) {
+    const res = await fetch(`${API}/complaints/${id}/status`, {
+        method: 'PATCH',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({status})
+    });
+    if(res.ok){toast(status==='RESOLVED'?'✅ Complaint resolved!':'📋 Complaint approved.', status==='RESOLVED'?'success':'info');loadComplaints();}
+    else toast('Error updating status.','error');
 }
 
 // ── BOOKINGS ──
