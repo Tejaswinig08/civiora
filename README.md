@@ -52,7 +52,7 @@ cd civiora
 
 # 2. Create database
 mysql -u root -p
-CREATE DATABASE civiora;
+CREATE DATABASE spring888;
 
 # 3. Configure application.properties
 spring.datasource.url=jdbc:mysql://localhost:3306/civiora
