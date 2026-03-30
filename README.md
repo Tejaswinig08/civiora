@@ -18,12 +18,12 @@ A full-stack society management platform that streamlines maintenance payments, 
   - Swimming pool  
   - Sports courts  
   - Clubhouse  
-- Real-time in-app chat system for communication
-- Residents can raise complaints (e.g., water, electricity, maintenance)
+- Real-time in-app chat system with Unified Feed (Public + Private DMs)
+- Residents and Admins can raise complaints (e.g., water, electricity)
 - Complaints categorized by priority (Low, Medium, High)
-- Admin can track, update status, and resolve issues
-- Transparent complaint lifecycle (Open → Approve → Resolved)
 - Update profile allows users to modify their **name, email, and password**, ensuring better communication, flexibility, and account security.
+- Admin can track, update status, resolve issues globally as well as manage their own profile
+- **Full Admin Feature-Parity:** Admin dashboard natively includes resident flows (Bookings, Wallet Top-up, Profiling, Unified Chat).
 
 ---
 
@@ -66,6 +66,7 @@ mvn spring-boot:run
 # 5. Open in browser
 http://localhost:8080 
 ```
+
 ## 📡 API Architecture
 The system follows a modular RESTful API design, organized by domain for scalability and maintainability.
 
@@ -310,14 +311,18 @@ Civiora addresses these challenges by providing a centralized digital platform f
   - Supports both **peer-to-peer (private chats)** and **public group chats**
   - Enables direct communication between residents as well as community-wide discussions
   - Real-time messaging for better interaction and engagement
-  ---
+
+---
 
 ## 🎯 Workflows
 
 **Resident:**  
-Login → Pay Maintenance → Book Facilities → View Notices → Chat  
-**Admin:**  
-Login → Post Notices → View Payments → Manage Bookings → Publish Audit Reports  
+Login → Pay Maintenance → Book Facilities → View Notices → Chat → File Complaints  
+
+**Admin (Hybrid Access):**  
+Login → Post Notices → Monitor Complaints Global → Manage Bookings Global → Publish Audit Reports  
+*Admins can also seamlessly function as residents within their dashboard to:*  
+→ Deposit Wallet Funds → Book Facilities → File Personal Complaints → Chat in Unified Feed → Update Profile.
 
 ---
 
