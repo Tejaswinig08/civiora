@@ -209,6 +209,7 @@ Civiora addresses these challenges by providing a centralized digital platform f
 
 ---
 ## 🔥 Recent Enhancements
+---
 ## 📋 Complaints
 **Complaint Status:**
 - APPROVED  
@@ -217,13 +218,12 @@ Civiora addresses these challenges by providing a centralized digital platform f
 - LOW  
 - MEDIUM  
 - HIGH
----
 
-- 📩 **Contact Us / Feedback System**
+## 📩 Contact Us / Feedback System
   - Added a Contact Us section where users can submit feedback.
   - The feedback is sent directly to the developer via email for better communication and improvements.
 
-- ⏱️ **Improved Booking System**
+## ⏱️ Improved Booking System
   - Enhanced booking logic to prevent time slot clashes.
   - If a facility is booked for a specific time (e.g., 12 PM – 5 PM), other users can only book strictly before or after that slot.
   - Ensures smooth and conflict-free facility usage.
