@@ -16,7 +16,7 @@
             flex-direction: column;
         }
 
-        /* NAVBAR */
+        /* ── NAVBAR ── */
         .navbar {
             padding: 15px 25px;
             text-align: right;
@@ -35,26 +35,74 @@
         }
         .navbar a:hover { color: #1a1a1a; }
 
-        /* GOLD HEADER */
+        /* ── GOLD HEADER ── */
         .top {
             text-align: center;
-            padding: 35px 20px;
+            padding: 30px 20px 20px;
             background: linear-gradient(135deg, #bd9537 0%, #f9f295 50%, #b8860b 100%);
             color: #1a1a1a;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             flex-shrink: 0;
         }
         .top h1 { font-size: 2rem; font-weight: 900; letter-spacing: 2px; }
-        .top p { font-size: 0.95rem; margin-top: 6px; font-weight: 600; }
+        .top p  { font-size: 0.9rem; margin-top: 4px; font-weight: 600; }
 
-        /* CHAT WRAPPER */
+        /* ── RECIPIENT BAR ── */
+        .recipient-bar {
+            background: #fff;
+            border-bottom: 2px solid #f0e8cc;
+            padding: 14px 24px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-shrink: 0;
+        }
+        .recipient-bar label {
+            font-weight: 700;
+            font-size: 13px;
+            color: #555;
+            white-space: nowrap;
+        }
+        .recipient-bar select {
+            flex: 1;
+            max-width: 340px;
+            padding: 9px 14px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: inherit;
+            outline: none;
+            cursor: pointer;
+            background: #fafafa;
+            color: #333;
+            transition: border 0.2s;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23b8860b' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 32px;
+        }
+        .recipient-bar select:focus { border-color: #bd9537; background-color: #fffdf5; }
+
+        .channel-badge {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+        .channel-badge.public { background: #fff8e1; color: #b8860b; border: 1.5px solid #e2b13c; }
+        .channel-badge.dm     { background: #e8f5e9; color: #2e7d32; border: 1.5px solid #81c784; }
+
+        /* ── CHAT WRAPPER ── */
         .chat-wrapper {
             flex: 1;
             display: flex;
             flex-direction: column;
-            max-width: 850px;
+            max-width: 900px;
             width: 100%;
-            margin: 25px auto;
+            margin: 20px auto;
             background: #fff;
             border-radius: 16px;
             box-shadow: 0 8px 30px rgba(0,0,0,0.08);
@@ -62,12 +110,12 @@
             border: 1px solid #eee;
         }
 
-        /* MESSAGES AREA */
+        /* ── MESSAGES AREA ── */
         .messages-area {
             flex: 1;
             overflow-y: auto;
-            padding: 25px 20px;
-            height: 500px;
+            padding: 22px 20px;
+            height: 480px;
             background: #fafafa;
             display: flex;
             flex-direction: column;
@@ -82,31 +130,30 @@
             font-weight: 600;
             letter-spacing: 1px;
             position: relative;
-            margin: 6px 0;
+            margin: 4px 0;
         }
         .date-divider::before, .date-divider::after {
             content: '';
             position: absolute;
             top: 50%;
-            width: 38%;
+            width: 37%;
             height: 1px;
             background: #e0e0e0;
         }
         .date-divider::before { left: 0; }
-        .date-divider::after { right: 0; }
+        .date-divider::after  { right: 0; }
 
-        /* CHAT BUBBLE */
+        /* ── BUBBLE ── */
         .bubble-row {
             display: flex;
             gap: 10px;
             align-items: flex-end;
-            animation: fadeIn 0.35s ease;
+            animation: fadeSlide 0.3s ease;
         }
-        @keyframes fadeIn {
+        @keyframes fadeSlide {
             from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
+            to   { opacity: 1; transform: translateY(0); }
         }
-
         .bubble-row.mine { flex-direction: row-reverse; }
 
         /* AVATAR */
@@ -117,16 +164,15 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 800;
             flex-shrink: 0;
             color: #fff;
         }
-        .avatar.user-avatar { background: linear-gradient(135deg, #b8860b, #f9f295); color: #1a1a1a; }
-        .avatar.admin-avatar { background: linear-gradient(135deg, #1565c0, #42a5f5); }
+        .avatar.user-av  { background: linear-gradient(135deg, #b8860b, #f9f295); color: #1a1a1a; }
+        .avatar.admin-av { background: linear-gradient(135deg, #1565c0, #42a5f5); }
 
-        /* BUBBLE */
-        .bubble-content { max-width: 65%; }
+        .bubble-content { max-width: 66%; }
 
         .bubble-meta {
             font-size: 11px;
@@ -135,6 +181,7 @@
             display: flex;
             align-items: center;
             gap: 6px;
+            flex-wrap: wrap;
         }
         .bubble-row.mine .bubble-meta { justify-content: flex-end; }
 
@@ -149,11 +196,22 @@
         .role-badge.user  { background: #fff8e1; color: #b8860b; border: 1px solid #e2b13c; }
         .role-badge.admin { background: #e3f2fd; color: #1565c0; border: 1px solid #90caf9; }
 
+        /* Channel tags — shown on every bubble in unified feed */
+        .channel-tag {
+            font-size: 9px;
+            font-weight: 800;
+            padding: 2px 7px;
+            border-radius: 10px;
+            letter-spacing: 0.3px;
+        }
+        .channel-tag.public { background: #fff8e1; color: #b8860b; border: 1px solid #e2b13c; }
+        .channel-tag.dm     { background: #e8f5e9; color: #2e7d32; border: 1px solid #81c784; }
+
         .bubble {
-            padding: 12px 16px;
+            padding: 11px 15px;
             border-radius: 18px;
             font-size: 14px;
-            line-height: 1.5;
+            line-height: 1.55;
             word-break: break-word;
             box-shadow: 0 2px 8px rgba(0,0,0,0.06);
         }
@@ -168,11 +226,16 @@
             color: #fff;
             border-bottom-right-radius: 4px;
         }
+        /* DM bubbles get green tint for non-mine side */
+        .bubble-row.dm-msg:not(.mine) .bubble {
+            background: #f1f8f1;
+            border-color: #c8e6c9;
+        }
 
         .bubble-time {
             font-size: 10px;
             color: #bbb;
-            margin-top: 4px;
+            margin-top: 3px;
             text-align: right;
         }
         .bubble-row:not(.mine) .bubble-time { text-align: left; }
@@ -187,23 +250,23 @@
             color: #ccc;
             gap: 10px;
             font-size: 15px;
+            padding: 40px;
         }
-        .empty-state span { font-size: 48px; }
+        .empty-state span { font-size: 52px; }
 
-        /* INPUT AREA */
+        /* ── INPUT AREA ── */
         .input-area {
             display: flex;
             gap: 10px;
-            padding: 16px 20px;
+            padding: 14px 18px;
             border-top: 1px solid #eee;
             background: #fff;
             flex-shrink: 0;
             align-items: flex-end;
         }
-
         .input-area textarea {
             flex: 1;
-            padding: 12px 16px;
+            padding: 11px 15px;
             border: 2px solid #ddd;
             border-radius: 12px;
             font-size: 14px;
@@ -231,7 +294,7 @@
             box-shadow: 0 3px 12px rgba(184, 134, 11, 0.4);
             white-space: nowrap;
         }
-        .send-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 16px rgba(184, 134, 11, 0.6); }
+        .send-btn:hover    { transform: translateY(-2px); box-shadow: 0 5px 16px rgba(184,134,11,0.6); }
         .send-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
         .char-info {
@@ -241,34 +304,39 @@
             padding: 0 4px;
         }
 
-        /* NOTIFICATION */
-        .notification {
+        /* ── TOAST ── */
+        .toast {
             position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%) translateY(-30px);
-            padding: 12px 28px;
+            bottom: 26px;
+            right: 26px;
+            padding: 12px 22px;
             border-radius: 10px;
             font-size: 14px;
-            font-weight: 700;
-            opacity: 0;
-            pointer-events: none;
-            transition: all 0.4s;
+            font-weight: 600;
+            color: #fff;
+            background: #2e7d32;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.18);
             z-index: 9999;
+            transform: translateY(80px);
+            opacity: 0;
+            transition: 0.35s ease;
+            max-width: 340px;
         }
-        .notification.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-        .notification.error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .toast.show  { transform: translateY(0); opacity: 1; }
+        .toast.error { background: #c62828; }
 
         @media (max-width: 600px) {
-            .chat-wrapper { margin: 10px; border-radius: 10px; }
+            .chat-wrapper  { margin: 10px; border-radius: 10px; }
             .messages-area { height: 360px; }
-            .bubble-content { max-width: 82%; }
+            .bubble-content{ max-width: 82%; }
+            .recipient-bar { flex-wrap: wrap; }
+            .recipient-bar select { max-width: 100%; }
         }
     </style>
 </head>
 <body>
 
-    <div id="notification" class="notification"></div>
+    <div class="toast" id="toast"></div>
 
     <div class="navbar">
         <a onclick="location.href='dashboard.html'">🏠 Dashboard</a>
@@ -277,7 +345,17 @@
 
     <div class="top">
         <h1>💬 Community Chat</h1>
-        <p>Talk to your neighbours and society admins</p>
+        <p>Unified timeline · select a recipient to send publicly or privately</p>
+    </div>
+
+    <!-- SEND-TO SELECTOR -->
+    <div class="recipient-bar">
+        <label>📤 Send to:</label>
+        <select id="recipientSelect" onchange="onRecipientChange()">
+            <option value="0">🌐 All (Public)</option>
+            <!-- populated by JS -->
+        </select>
+        <span class="channel-badge public" id="channelBadge">🌐 Sending to: Everyone</span>
     </div>
 
     <div class="chat-wrapper">
@@ -290,7 +368,7 @@
 
         <div class="input-area">
             <div style="flex:1; display:flex; flex-direction:column; gap:4px;">
-                <textarea id="msgInput" placeholder="Type your message..." maxlength="500"
+                <textarea id="msgInput" placeholder="Type your message…" maxlength="500"
                     oninput="updateCharCount()" onkeydown="handleKey(event)"></textarea>
                 <div class="char-info"><span id="charCount">0</span>/500</div>
             </div>
@@ -299,83 +377,202 @@
     </div>
 
     <script>
-        const userId = parseInt(localStorage.getItem('userId') || '0');
+        // ── STATE ──────────────────────────────────────────────────────
+        const myId   = parseInt(localStorage.getItem('userId') || '0');
+        const myRole = (localStorage.getItem('role') || 'user').toLowerCase();
         let lastMessageId = 0;
-        let pollInterval = null;
+        let pollInterval  = null;
+        // Unified feed: dropdown only controls SEND target, never switches view
+        let currentWith   = 0;     // 0 = public broadcast; >0 = private DM
+        const userMap     = {};    // id → name, populated from /chat/users
 
-        if (!userId) {
+        // Race-condition guards
+        let loadSeq       = 0;
+        let isPolling     = false;
+        const renderedIds = new Set();
+
+        if (!myId) {
             alert('Please login first!');
             location.href = 'login.html';
         }
 
-        // ─── LOAD ALL MESSAGES ────────────────────────────────────────
-        async function loadMessages() {
+        // ── TOAST ──────────────────────────────────────────────────────
+        let _toastTimer;
+        function showToast(msg, type = 'success') {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.className = 'toast show' + (type === 'error' ? ' error' : '');
+            clearTimeout(_toastTimer);
+            _toastTimer = setTimeout(() => t.classList.remove('show'), 4000);
+        }
+
+        // ── LOAD USERS FOR DROPDOWN + userMap ────────────────────────────
+        async function loadUsers() {
             try {
-                const res = await fetch('http://localhost:8080/chat/messages');
+                const res   = await fetch('http://localhost:8080/chat/users');
+                const users = await res.json();
+                const sel   = document.getElementById('recipientSelect');
+
+                // Build id → name map for receiver-name lookup in bubbles
+                userMap[myId] = 'You';
+                users.forEach(u => { userMap[u.id] = u.name; });
+
+                const admins  = users.filter(u => u.id !== myId && u.role && u.role.toLowerCase() === 'admin');
+                const members = users.filter(u => u.id !== myId && u.role && u.role.toLowerCase() !== 'admin');
+
+                if (admins.length) {
+                    const g = document.createElement('optgroup');
+                    g.label = '👑 Admins';
+                    admins.forEach(u => {
+                        const o = document.createElement('option');
+                        o.value       = u.id;
+                        o.textContent = u.name;
+                        g.appendChild(o);
+                    });
+                    sel.appendChild(g);
+                }
+
+                if (members.length) {
+                    const g = document.createElement('optgroup');
+                    g.label = '🏠 Residents';
+                    members.forEach(u => {
+                        const o = document.createElement('option');
+                        o.value       = u.id;
+                        o.textContent = u.name;
+                        g.appendChild(o);
+                    });
+                    sel.appendChild(g);
+                }
+            } catch (err) {
+                console.error('Failed to load users', err);
+            }
+        }
+
+        // ── RECIPIENT CHANGE ──────────────────────────────────────────
+        // Only updates the send target + badge.
+        // Does NOT reload messages — the feed is always unified.
+        function onRecipientChange() {
+            const val   = parseInt(document.getElementById('recipientSelect').value);
+            const badge = document.getElementById('channelBadge');
+            const inp   = document.getElementById('msgInput');
+
+            if (val === 0) {
+                currentWith       = 0;
+                badge.textContent = '🌐 Sending to: Everyone';
+                badge.className   = 'channel-badge public';
+                inp.placeholder   = 'Type a message to everyone…';
+            } else {
+                currentWith       = val;
+                const name        = document.getElementById('recipientSelect').selectedOptions[0].text;
+                badge.textContent = '🔒 Sending privately to: ' + name;
+                badge.className   = 'channel-badge dm';
+                inp.placeholder   = `Private message to ${name}…`;
+            }
+        }
+
+        // ── BUILD API URL (always unified mode) ───────────────────────────
+        function buildUrl(base) {
+            return `http://localhost:8080${base}?mode=unified&userId=${myId}`;
+        }
+
+        // ── LOAD MESSAGES (full refresh) ──────────────────────────────
+        async function loadMessages() {
+            const mySeq = loadSeq;
+            try {
+                const res = await fetch(buildUrl('/chat/messages'));
+                if (mySeq !== loadSeq) return;
+
                 const messages = await res.json();
+                if (mySeq !== loadSeq) return;
 
                 const area = document.getElementById('messagesArea');
                 area.innerHTML = '';
+                lastMessageId  = 0;
+                renderedIds.clear();
 
                 if (!messages.length) {
-                    area.innerHTML = `<div class="empty-state"><span>💬</span><p>No messages yet. Be the first to say something!</p></div>`;
+                    area.innerHTML = emptyHtml();
                     return;
                 }
 
                 let lastDate = '';
                 messages.forEach(m => {
+                    renderedIds.add(m.id);
+                    lastMessageId = Math.max(lastMessageId, m.id);
                     const dateStr = formatDate(m.sentAt);
                     if (dateStr !== lastDate) {
-                        area.insertAdjacentHTML('beforeend', `<div class="date-divider">${dateStr}</div>`);
+                        area.insertAdjacentHTML('beforeend',
+                            `<div class="date-divider">${dateStr}</div>`);
                         lastDate = dateStr;
                     }
                     area.insertAdjacentHTML('beforeend', buildBubble(m));
-                    lastMessageId = Math.max(lastMessageId, m.id);
                 });
-
                 scrollToBottom();
             } catch (err) {
-                console.error('Failed to load messages', err);
+                console.error('loadMessages error', err);
             }
         }
 
-        // ─── POLL FOR NEW MESSAGES ────────────────────────────────────
+        // ── POLL FOR NEW MESSAGES ─────────────────────────────────────
         async function pollMessages() {
+            if (isPolling) return;
+            isPolling = true;
+            const mySeq = loadSeq;
             try {
-                const res = await fetch(`http://localhost:8080/chat/messages/since/${lastMessageId}`);
-                const messages = await res.json();
-                if (!messages.length) return;
+                const res = await fetch(
+                    buildUrl(`/chat/messages/since/${lastMessageId}`));
+                if (mySeq !== loadSeq) return;
 
-                const area = document.getElementById('messagesArea');
-                // Remove empty state if present
+                const messages = await res.json();
+                if (!messages.length || mySeq !== loadSeq) return;
+
+                const area  = document.getElementById('messagesArea');
                 const empty = area.querySelector('.empty-state');
                 if (empty) empty.remove();
 
                 messages.forEach(m => {
-                    area.insertAdjacentHTML('beforeend', buildBubble(m));
+                    if (renderedIds.has(m.id)) return;
+                    renderedIds.add(m.id);
                     lastMessageId = Math.max(lastMessageId, m.id);
+                    area.insertAdjacentHTML('beforeend', buildBubble(m));
                 });
                 scrollToBottom();
             } catch (err) {
-                console.error('Polling error', err);
+                console.error('pollMessages error', err);
+            } finally {
+                isPolling = false;
             }
         }
 
-        // ─── BUILD BUBBLE HTML ────────────────────────────────────────
+        // ── BUILD BUBBLE HTML ───────────────────────────────────────────
         function buildBubble(m) {
-            const isMine = (m.userId === userId);
-            const role = m.role ? m.role.toLowerCase() : 'user';
+            const isMine  = (m.userId === myId);
+            const isDM    = (m.receiverId != null && m.receiverId > 0);
+            const role    = (m.role || 'USER').toLowerCase();
             const initial = m.senderName ? m.senderName.charAt(0).toUpperCase() : '?';
-            const time = formatTime(m.sentAt);
-            const roleLabel = m.role === 'ADMIN' ? 'Admin' : 'Resident';
+            const time    = formatTime(m.sentAt);
+            const roleLbl = role === 'admin' ? 'Admin' : 'Resident';
+
+            // ─ Channel tag (Public / Private → ReceiverName) ──────────
+            let channelTag;
+            if (!isDM) {
+                channelTag = `<span class="channel-tag public">🌐 Public</span>`;
+            } else {
+                const receiverName = userMap[m.receiverId] || ('#' + m.receiverId);
+                const toLabel      = isMine
+                    ? `→ ${receiverName}`
+                    : `→ You`;
+                channelTag = `<span class="channel-tag dm">🔒 Private ${toLabel}</span>`;
+            }
 
             return `
-                <div class="bubble-row ${isMine ? 'mine' : ''}">
-                    <div class="avatar ${role === 'admin' ? 'admin-avatar' : 'user-avatar'}">${initial}</div>
+                <div class="bubble-row ${isMine ? 'mine' : ''} ${isDM ? 'dm-msg' : ''}">
+                    <div class="avatar ${role === 'admin' ? 'admin-av' : 'user-av'}">${initial}</div>
                     <div class="bubble-content">
                         <div class="bubble-meta">
                             <span>${isMine ? 'You' : escapeHtml(m.senderName)}</span>
-                            <span class="role-badge ${role}">${roleLabel}</span>
+                            <span class="role-badge ${role}">${roleLbl}</span>
+                            ${channelTag}
                         </div>
                         <div class="bubble">${escapeHtml(m.message)}</div>
                         <div class="bubble-time">${time}</div>
@@ -384,40 +581,42 @@
             `;
         }
 
-        // ─── SEND MESSAGE ─────────────────────────────────────────────
+        // ── SEND MESSAGE ────────────────────────────────────────────────
         async function sendMessage() {
-            const input = document.getElementById('msgInput');
-            const text = input.value.trim();
+            const input   = document.getElementById('msgInput');
+            const text    = input.value.trim();
+            const sendBtn = document.getElementById('sendBtn');
             if (!text) return;
 
-            const sendBtn = document.getElementById('sendBtn');
             sendBtn.disabled = true;
 
+            const body = { userId: myId, message: text };
+            if (currentWith > 0) body.receiverId = currentWith;
+
             try {
-                const res = await fetch('http://localhost:8080/chat/send', {
-                    method: 'POST',
+                const res  = await fetch('http://localhost:8080/chat/send', {
+                    method:  'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ userId, message: text })
+                    body:    JSON.stringify(body)
                 });
                 const data = await res.json();
 
                 if (data.status === 'success') {
                     input.value = '';
                     document.getElementById('charCount').textContent = '0';
-                    // Immediately poll for the new message
                     await pollMessages();
                 } else {
-                    showNotification(data.message || 'Failed to send', 'error');
+                    showToast(data.message || 'Failed to send', 'error');
                 }
             } catch (err) {
-                showNotification('Connection error.', 'error');
+                showToast('Connection error.', 'error');
             } finally {
                 sendBtn.disabled = false;
                 input.focus();
             }
         }
 
-        // Enter to send (Shift+Enter = new line)
+        // ── UTILS ───────────────────────────────────────────────────────
         function handleKey(e) {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -425,47 +624,42 @@
             }
         }
 
-        // ─── UTILS ───────────────────────────────────────────────────
         function scrollToBottom() {
             const area = document.getElementById('messagesArea');
             area.scrollTop = area.scrollHeight;
         }
 
         function updateCharCount() {
-            const v = document.getElementById('msgInput').value.length;
-            document.getElementById('charCount').textContent = v;
+            document.getElementById('charCount').textContent =
+                document.getElementById('msgInput').value.length;
+        }
+
+        function emptyHtml() {
+            return `<div class="empty-state"><span>💬</span><p>No messages yet. Be the first to say something!</p></div>`;
         }
 
         function formatDate(isoStr) {
-            const d = new Date(isoStr);
-            const today = new Date();
+            const d         = new Date(isoStr);
+            const today     = new Date();
             const yesterday = new Date(today);
             yesterday.setDate(today.getDate() - 1);
-            if (d.toDateString() === today.toDateString()) return 'Today';
+            if (d.toDateString() === today.toDateString())     return 'Today';
             if (d.toDateString() === yesterday.toDateString()) return 'Yesterday';
-            return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+            return d.toLocaleDateString('en-IN',
+                { day: 'numeric', month: 'short', year: 'numeric' });
         }
 
         function formatTime(isoStr) {
-            const d = new Date(isoStr);
-            return d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
+            return new Date(isoStr).toLocaleTimeString('en-IN',
+                { hour: '2-digit', minute: '2-digit', hour12: true });
         }
 
         function escapeHtml(str) {
             return String(str)
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
+                .replace(/&/g,  '&amp;')
+                .replace(/</g,  '&lt;')
+                .replace(/>/g,  '&gt;')
                 .replace(/"/g, '&quot;');
-        }
-
-        function showNotification(message, type) {
-            const n = document.getElementById('notification');
-            n.textContent = message;
-            n.className = 'notification ' + type;
-            void n.offsetWidth;
-            n.classList.add('show');
-            setTimeout(() => n.classList.remove('show'), 3500);
         }
 
         function logout() {
@@ -474,9 +668,12 @@
             window.location.href = 'login.html';
         }
 
-        // ─── INIT ─────────────────────────────────────────────────────
-        loadMessages();
-        pollInterval = setInterval(pollMessages, 3000);
+        // ── INIT ──────────────────────────────────────────────────────
+        (async () => {
+            await loadUsers();       // populates dropdown + userMap
+            await loadMessages();    // initial unified feed
+            pollInterval = setInterval(pollMessages, 3000);
+        })();
     </script>
 </body>
 </html>

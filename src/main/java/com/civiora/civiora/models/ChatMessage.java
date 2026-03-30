@@ -30,6 +30,13 @@ public class ChatMessage {
     @Column(nullable = false, length = 500)
     private String message;
 
+    /**
+     * NULL  = public message (visible to everyone in "All" channel)
+     * non-NULL = private DM (visible only to sender & receiver)
+     */
+    @Column
+    private Integer receiverId;
+
     @Column(nullable = false)
     private LocalDateTime sentAt;
 
