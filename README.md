@@ -229,7 +229,7 @@ Civiora addresses these challenges by providing a centralized digital platform f
   - If a facility is booked for a specific time (e.g., 12 PM – 5 PM), other users can only book strictly before or after that slot.
   - Ensures smooth and conflict-free facility usage.
 
-    ## 💬 Advanced Chat System
+## 💬 Advanced Chat System
   - Supports both **peer-to-peer (private chats)** and **public group chats**
   - Enables direct communication between residents as well as community-wide discussions
   - Real-time messaging for better interaction and engagement
