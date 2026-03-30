@@ -198,38 +198,27 @@
             to { transform: rotate(360deg); }
         }
 
-        /* NOTIFICATION */
-        .notification {
+        /* TOAST */
+        .toast {
             position: fixed;
-            top: 30px;
-            left: 50%;
-            transform: translateX(-50%) translateY(-20px);
-            padding: 16px 35px;
+            bottom: 28px;
+            right: 28px;
+            padding: 13px 24px;
             border-radius: 10px;
-            font-size: 16px;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            opacity: 0;
-            pointer-events: none;
-            transition: all 0.5s ease;
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+            background: #2e7d32;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
             z-index: 9999;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            transform: translateY(80px);
+            opacity: 0;
+            transition: 0.35s ease;
+            max-width: 360px;
         }
-        .notification.success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        .notification.error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        .notification.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
-            pointer-events: auto;
-        }
+        .toast.show  { transform: translateY(0); opacity: 1; }
+        .toast.error { background: #c62828; }
+        .toast.info  { background: #b8860b; }
 
         /* CHAR COUNTER */
         .char-counter {
@@ -251,8 +240,8 @@
 </head>
 <body>
 
-    <!-- Notification Banner -->
-    <div id="notification" class="notification"></div>
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
 
     <div class="navbar">
         <a onclick="location.href='dashboard.html'">Dashboard</a>
@@ -289,20 +278,14 @@
     </div>
 
     <script>
-        // ---- Notification Helper ----
-        function showNotification(message, type) {
-            const notif = document.getElementById('notification');
-            notif.innerText = message;
-            notif.className = 'notification ' + type;
-
-            // Trigger reflow then show
-            void notif.offsetWidth;
-            notif.classList.add('show');
-
-            // Auto-hide after 3 seconds
-            setTimeout(() => {
-                notif.classList.remove('show');
-            }, 3000);
+        // ── Toast Helper ──
+        let _toastTimer;
+        function showToast(msg, type = 'success') {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.className = 'toast show' + (type === 'error' ? ' error' : type === 'info' ? ' info' : '');
+            clearTimeout(_toastTimer);
+            _toastTimer = setTimeout(() => t.classList.remove('show'), 4000);
         }
 
         // ---- Char Counter ----
@@ -322,7 +305,10 @@
                 bookingData = {
                     facility: params.get('facility'),
                     date: params.get('date'),
-                    time: decodeURIComponent(params.get('time'))
+                    time: decodeURIComponent(params.get('time')),
+                    // 24h range fields for backend conflict guard
+                    startTime: decodeURIComponent(params.get('startTime') || ''),
+                    endTime:   decodeURIComponent(params.get('endTime')   || '')
                 };
 
                 const amountInput = document.getElementById('depositAmount');
@@ -365,23 +351,32 @@
 
             try {
                 if (isBookingCheckout) {
-                    // Option 3: Process Booking Directly
+                    // Booking checkout — send startTime + endTime for backend conflict guard
                     const res = await fetch('http://localhost:8080/bookings', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
-                            userId: parseInt(userId),
-                            facility: bookingData.facility,
-                            date: bookingData.date,
-                            time: bookingData.time
+                            userId:    parseInt(userId),
+                            facility:  bookingData.facility,
+                            date:      bookingData.date,
+                            time:      bookingData.time,
+                            startTime: bookingData.startTime,
+                            endTime:   bookingData.endTime
                         })
                     });
                     const data = await res.json();
+
                     if (data.status === 'success') {
-                        showNotification('Payment Successful! Booking Confirmed.', 'success');
+                        showToast('✅ Payment Successful! Booking Confirmed.', 'success');
                         setTimeout(() => { location.href = 'history.html'; }, 2000);
+                    } else if (data.status === 'conflict') {
+                        // Time-slot conflict detected at backend (race condition safety net)
+                        showToast('🚫 ' + data.message, 'error');
+                        payBtn.disabled = false;
+                        payBtn.innerHTML = 'Pay';
+                        setTimeout(() => { history.back(); }, 3000);
                     } else {
-                        showNotification(data.message || 'Payment failed', 'error');
+                        showToast(data.message || '❌ Payment failed', 'error');
                         payBtn.disabled = false;
                         payBtn.innerHTML = 'Pay';
                     }
@@ -401,15 +396,15 @@
                     if (data === 'Payment Successful') {
                         form.reset();
                         updateCharCount();
-                        showNotification('Payment Successful!', 'success');
+                        showToast('✅ Payment Successful!', 'success');
                     } else {
-                        showNotification(data || 'Payment failed', 'error');
+                        showToast(data || '❌ Payment failed', 'error');
                     }
                     payBtn.disabled = false;
                     payBtn.innerHTML = 'Pay';
                 }
             } catch (err) {
-                showNotification('Connection error. Server might be down.', 'error');
+                showToast('⚠️ Connection error. Server might be down.', 'error');
                 payBtn.disabled = false;
                 payBtn.innerHTML = 'Pay';
             }

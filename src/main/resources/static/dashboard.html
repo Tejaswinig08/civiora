@@ -7,9 +7,7 @@
 </head>
 <body>
     <div class="navbar">
-        <a href="profile.html">My Profile</a>
-        <a href="complaint.html">📋 Complaints</a>
-        <a onclick="logout()" style="cursor: pointer;">Logout</a>
+        <a onclick="logout()" style="cursor: pointer;">Log Out</a>
     </div>
 
     <div class="top">
@@ -59,6 +57,18 @@
                 <div class="task-logo">📋</div>
                 <b>Complaints</b>
                 <p>Submit and track your society complaints.</p>
+            </div>
+
+            <div class="card" onclick="location.href='profile.html'">
+                <div class="task-logo">👤</div>
+                <b>My Profile</b>
+                <p>View and update your personal account details.</p>
+            </div>
+
+            <div class="card" onclick="location.href='contact.html'">
+                <div class="task-logo">📬</div>
+                <b>Contact Us</b>
+                <p>Reach out to the society management team.</p>
             </div>
         </div>
     </div>

@@ -29,6 +29,13 @@ public class Booking {
     @Column(nullable = false)
     private String bookingTime;
 
+    // 24h format "HH:mm" – used for time-range overlap detection
+    @Column
+    private String startTime;
+
+    @Column
+    private String endTime;
+
     @Column(nullable = false)
     private double amount;
 
