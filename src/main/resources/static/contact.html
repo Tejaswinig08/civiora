@@ -6,8 +6,6 @@
     <title>Civiora – Contact Us</title>
     <meta name="description" content="Reach out to the Civiora society management team with your queries or feedback.">
 
-    <!-- EmailJS SDK -->
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -221,12 +219,8 @@
         // const userId = localStorage.getItem('userId');
         // if (!userId) { location.href = 'login.html'; }
 
-        // ── EMAILJS INIT ──────────────────────────────────────────────────────
-        // Replace with your actual EmailJS public key
-        emailjs.init("${PUBLICKEY}"); // <-- REPLACE with your EmailJS public key
 
         // ── FORM HANDLER ──────────────────────────────────────────────────────
-        function handleSubmit() {
             const name   = document.getElementById('contactName').value.trim();
             const phone  = document.getElementById('contactPhone').value.trim();
             const email  = document.getElementById('contactEmail').value.trim();
@@ -248,25 +242,15 @@
             btn.disabled = true;
             btn.textContent = 'Sending…';
 
-            const data = { name, phone, email, doubt };
 
-            // Replace "serviceid" and "templateid" with your actual EmailJS IDs
-            emailjs.send("${serviceid}", "${templateid}", data, "${ID}") // <-- REPLACE
-                .then(() => {
-                    showToast('✅ Message sent successfully!', 'success');
-                    document.getElementById('contactName').value  = '';
-                    document.getElementById('contactPhone').value = '';
-                    document.getElementById('contactEmail').value = '';
-                    document.getElementById('contactDoubt').value = '';
-                    btn.disabled = false;
-                    btn.textContent = 'Submit';
-                })
-                .catch((err) => {
-                    console.error('EmailJS error:', err);
-                    showToast('❌ Failed to send. Please try again.', 'error');
-                    btn.disabled = false;
-                    btn.textContent = 'Submit';
-                });
+                showToast('✅ Message sent successfully!', 'success');
+                document.getElementById('contactName').value  = '';
+                document.getElementById('contactPhone').value = '';
+                document.getElementById('contactEmail').value = '';
+                document.getElementById('contactDoubt').value = '';
+                showToast('❌ Failed to send. Please try again.', 'error');
+                btn.disabled = false;
+                btn.textContent = 'Submit';
         }
 
         // ── TOAST ─────────────────────────────────────────────────────────────

@@ -54,8 +54,9 @@ public class OtpController {
             response.put("message", "OTP sent to " + email);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
+            e.printStackTrace();
             response.put("status", "error");
-            response.put("message", "Failed to send OTP. Please try again.");
+            response.put("message", "Failed to send OTP: " + e.getMessage());
             return ResponseEntity.internalServerError().body(response);
         }
     }
