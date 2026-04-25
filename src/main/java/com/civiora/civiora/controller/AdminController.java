@@ -2,6 +2,7 @@ package com.civiora.civiora.controller;
 
 import com.civiora.civiora.models.*;
 import com.civiora.civiora.repositories.*;
+import java.util.Map;
 import com.civiora.civiora.service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/admin")
@@ -22,6 +24,7 @@ public class AdminController {
     @Autowired BookingRepo      bookingRepo;
     @Autowired ActivityLogRepo  logRepo;
     @Autowired EmailService     emailService;
+    @Autowired ComplaintRepo    complaintRepo;
 
     // ── USERS ──────────────────────────────────────────────────────────────────
 
@@ -152,6 +155,29 @@ public class AdminController {
         bookingRepo.save(b);
         logRepo.save(new ActivityLog("Confirmed booking #" + id + " for " + b.getFacilityName(), "Admin"));
         return ResponseEntity.ok("Booking confirmed");
+    }
+
+    // ── COMPLAINTS ─────────────────────────────────────────────────────────────
+
+    @GetMapping("/complaints")
+    public List<Complaint> getAllComplaints() {
+        return complaintRepo.findAllByOrderByCreatedAtDesc();
+    }
+
+    @PatchMapping("/complaints/{id}/status")
+    public ResponseEntity<String> updateComplaintStatus(@PathVariable int id, @RequestBody Map<String, String> body) {
+        Complaint c = complaintRepo.findById(id).orElse(null);
+        if (c == null) return ResponseEntity.notFound().build();
+
+        String newStatus = body.getOrDefault("status", "").toUpperCase();
+        if (!newStatus.equals("APPROVED") && !newStatus.equals("RESOLVED")) {
+            return ResponseEntity.badRequest().body("Status must be APPROVED or RESOLVED");
+        }
+
+        c.setStatus(newStatus);
+        complaintRepo.save(c);
+        logRepo.save(new ActivityLog("Updated complaint #" + id + " to " + newStatus, "Admin"));
+        return ResponseEntity.ok("Status updated to " + newStatus);
     }
 
     // ── ACTIVITY LOG ───────────────────────────────────────────────────────────

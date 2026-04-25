@@ -13,6 +13,8 @@ public interface BookingRepo extends JpaRepository<Booking, Integer> {
 
     int countByFacilityNameAndBookingDateAndBookingTime(String facilityName, String bookingDate, String bookingTime);
 
+    int countByFacilityNameAndBookingDateAndBookingTimeAndStatus(String facilityName, String bookingDate, String bookingTime, String status);
+
     List<Booking> findByUserIdOrderByCreatedAtDesc(int userId);
 
     /** Fetch all confirmed bookings for a facility on a date — used for Java-side overlap detection. */

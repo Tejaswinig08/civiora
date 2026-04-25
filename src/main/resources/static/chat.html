@@ -548,10 +548,12 @@
         function buildBubble(m) {
             const isMine  = (m.userId === myId);
             const isDM    = (m.receiverId != null && m.receiverId > 0);
-            const role    = (m.role || 'USER').toLowerCase();
+            const roleStr = (m.role || 'USER').toUpperCase();
+            const isStaff = roleStr !== 'OWNER' && roleStr !== 'USER';
+            const role    = roleStr.toLowerCase();
             const initial = m.senderName ? m.senderName.charAt(0).toUpperCase() : '?';
             const time    = formatTime(m.sentAt);
-            const roleLbl = role === 'admin' ? 'Admin' : 'Resident';
+            const roleLbl = (m.role || 'Resident').charAt(0).toUpperCase() + (m.role || 'Resident').slice(1).toLowerCase();
 
             // ─ Channel tag (Public / Private → ReceiverName) ──────────
             let channelTag;
@@ -567,7 +569,7 @@
 
             return `
                 <div class="bubble-row ${isMine ? 'mine' : ''} ${isDM ? 'dm-msg' : ''}">
-                    <div class="avatar ${role === 'admin' ? 'admin-av' : 'user-av'}">${initial}</div>
+                    <div class="avatar ${isStaff ? 'admin-av' : 'user-av'}">${initial}</div>
                     <div class="bubble-content">
                         <div class="bubble-meta">
                             <span>${isMine ? 'You' : escapeHtml(m.senderName)}</span>

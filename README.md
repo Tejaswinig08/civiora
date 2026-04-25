@@ -18,11 +18,11 @@ A full-stack society management platform that streamlines maintenance payments, 
   - Swimming pool  
   - Sports courts  
   - Clubhouse  
-- Real-time in-app chat system for communication
-- Residents can raise complaints (e.g., water, electricity, maintenance)
+- Real-time in-app chat system with Unified Feed (Public + Private DMs)
+- Residents and Admins can raise complaints (e.g., water, electricity)
 - Complaints categorized by priority (Low, Medium, High)
-- Admin can track, update status, and resolve issues
-- Transparent complaint lifecycle (Open → Approve → Resolved)
+- Admin can track, update status, resolve issues globally as well as manage their own profile
+- **Full Admin Feature-Parity:** Admin dashboard natively includes resident flows (Bookings, Wallet Top-up, Profiling, Unified Chat).
 
 ---
 
@@ -73,122 +73,200 @@ The system follows a modular RESTful API design, organized by domain for scalabi
 
 | Endpoint | Method | Description |
 |----------|--------|------------|
-| `/auth/send-otp` | POST | Send OTP to email |
-| `/auth/verify-otp` | POST | Verify OTP & login |
+| `/send-otp` | POST | Send OTP to registered email |
+| `/verify-otp` | POST | Verify OTP & login |
 
 ### 👤 Users
 
 | Endpoint | Method | Description |
 |----------|--------|------------|
-| `/users/{id}` | GET | Get user details |
-| `/users` | GET | [Admin] Get all users |
+| `/register` | POST | Register a new user |
+| `/user/{id}` | GET | Get user details by ID |
+| `/update` | POST | Update user profile (name / email) |
 
-### 💳 Payments
+### 💳 Payments (In-App Wallet)
 
 | Endpoint | Method | Description |
 |----------|--------|------------|
-| `/payments` | POST | Pay maintenance |
-| `/payments/{userId}` | GET | Get payment history |
+| `/deposit` | POST | Deposit amount into resident wallet |
+| `/passbook/{userId}` | GET | Get transaction history for user |
 
 ### 📢 Notices
 
 | Endpoint | Method | Description |
 |----------|--------|------------|
-| `/notices` | GET | Get all notices (priority sorted) |
-| `/notices` | POST | [Admin] Create notice |
+| `/admin/notices` | GET | Get all notices (date sorted) |
+| `/admin/notices` | POST | [Admin] Create notice |
+| `/admin/notices/{id}` | DELETE | [Admin] Delete notice |
 
 ### 🏢 Bookings
 
 | Endpoint | Method | Description |
 |----------|--------|------------|
-| `/bookings` | POST | Book facility |
-| `/bookings/{userId}` | GET | View user bookings |
-| `/bookings/{id}` | DELETE | Cancel booking |
+| `/bookings` | POST | Book a facility |
+| `/bookings/user/{userId}` | GET | View user bookings |
+| `/bookings/availability` | GET | Check slot availability (capacity-based) |
+| `/bookings/conflict-check` | GET | Check time-range conflict |
+| `/admin/bookings` | GET | [Admin] Get all bookings |
+| `/admin/bookings/{id}/cancel` | PATCH | [Admin] Cancel a booking |
+| `/admin/bookings/{id}/confirm` | PATCH | [Admin] Confirm a booking |
 
 ### 💬 Chat
 
 | Endpoint | Method | Description |
 |----------|--------|------------|
-| `/chat` | POST | Send message |
-| `/chat/{userId}` | GET | Fetch messages |
-
-### 📊 Audit
-
-| Endpoint | Method | Description |
-|----------|--------|------------|
-| `/audit` | GET | View annual financial report |
-
-## 📊 Data Models
-
-| Entity | Fields |
-|--------|--------|
-| **User** | id, name, email, role |
-| **Payment** | id, userId, amount, method, date |
-| **Notice** | id, title, description, priority, date |
-| **Booking** | id, userId, facility, date, timeSlot |
-| **Chat** | id, senderId, message, timestamp |
-| **Audit** | id, report, year |
+| `/chat/send` | POST | Send a message (public or private DM) |
+| `/chat/messages` | GET | Fetch messages (`?mode=unified&userId=` / `?mode=dm&userId=&with=`) |
+| `/chat/messages/since/{lastId}` | GET | Fetch new messages since lastId (polling) |
+| `/chat/users` | GET | Get user list for DM recipient dropdown |
 
 ### 🛠️ Complaints
 
 | Endpoint | Method | Description |
 |----------|--------|------------|
 | `/complaints` | POST | Raise a complaint |
-| `/complaints/{userId}` | GET | View user complaints |
-| `/complaints` | GET | [Admin] Get all complaints |
-| `/complaints/{id}` | PUT | Update complaint status |
-| `/complaints/{id}` | DELETE | Delete complaint |
+| `/complaints/user/{userId}` | GET | View own complaints |
+| `/admin/complaints` | GET | [Admin] Get all complaints |
+| `/admin/complaints/{id}/status` | PATCH | [Admin] Update complaint status (APPROVED / RESOLVED) |
 
+### 👑 Admin — Users & Maintenance
+
+| Endpoint | Method | Description |
+|----------|--------|------------|
+| `/admin/users` | GET | [Admin] Get all users |
+| `/admin/users` | POST | [Admin] Add resident / admin |
+| `/admin/users/{id}` | DELETE | [Admin] Delete user |
+| `/admin/payments` | GET | [Admin] Get all maintenance records |
+| `/admin/payments` | POST | [Admin] Add maintenance record |
+| `/admin/payments/{id}/mark-paid` | PATCH | [Admin] Mark maintenance as paid |
+| `/admin/payments/{id}` | DELETE | [Admin] Delete maintenance record |
+| `/admin/send-reminders` | POST | [Admin] Email payment reminders to due residents |
+| `/admin/transactions` | GET | [Admin] View all wallet transactions (audit log) |
+| `/admin/logs` | GET | [Admin] View activity logs |
+| `/admin/logs` | DELETE | [Admin] Clear activity logs |
 
 ## 🔑 Sample API Calls
 
 ```bash
 # Send OTP
-curl -X POST http://localhost:8080/auth/send-otp \
+curl -X POST http://localhost:8080/send-otp \
 -H "Content-Type: application/json" \
 -d '{"email":"user@example.com"}'
 
 # Verify OTP
-curl -X POST http://localhost:8080/auth/verify-otp \
+curl -X POST http://localhost:8080/verify-otp \
 -H "Content-Type: application/json" \
 -d '{"email":"user@example.com","otp":"123456"}'
 
-# Make Payment
-curl -X POST http://localhost:8080/payments \
+# Deposit to wallet
+curl -X POST http://localhost:8080/deposit \
 -H "Content-Type: application/json" \
--d '{"userId":1,"amount":2000,"method":"UPI"}'
+-d '{"userId":1,"amount":2000,"description":"Monthly maintenance"}'
 
-# Raise Complaint
+# Book a facility
+curl -X POST http://localhost:8080/bookings \
+-H "Content-Type: application/json" \
+-d '{"userId":1,"facility":"gym","date":"2026-04-10","time":"09:00 AM","startTime":"09:00","endTime":"10:00"}'
+
+# Raise a Complaint
 curl -X POST http://localhost:8080/complaints \
 -H "Content-Type: application/json" \
--d '{"userId":1,"title":"Water Leakage","description":"Leak in bathroom","priority":"HIGH"}'
+-d '{"userId":1,"senderName":"Ravi Kumar","subject":"Water Leakage","message":"Leak in bathroom pipe","priority":"HIGH"}'
+
+# Send a public broadcast message
+curl -X POST http://localhost:8080/chat/send \
+-H "Content-Type: application/json" \
+-d '{"userId":1,"message":"Society meeting at 7 PM today"}'
+
+# Send a private DM
+curl -X POST http://localhost:8080/chat/send \
+-H "Content-Type: application/json" \
+-d '{"userId":1,"message":"Can you help me?","receiverId":3}'
 ```
 
 ## 📊 Data Models
 
 | Entity | Fields |
 |--------|--------|
-| **User** | id, name, email, role |
-| **Payment** | id, userId, amount, method, date |
-| **Notice** | id, title, description, priority, date |
-| **Booking** | id, userId, facility, date, timeSlot |
-| **Chat** | id, senderId, message, timestamp |
-| **Audit** | id, report, year |
-| **Complaint** | id, userId, title, description, priority, status, date |
+| **User** | id, name, email, password, wing, flat, role, balance |
+| **Transaction** | id, userId, amount, currBalance, description, date |
+| **Maintenance Payment** | id, name, email, wing, flat, amount, month, status, paidOn |
+| **Notice** | id, title, category, priority, summary, detail, author, date |
+| **Booking** | id, userId, facilityName, bookingDate, bookingTime, startTime, endTime, amount, status, createdAt |
+| **ChatMessage** | id, userId, senderName, role, message, receiverId (null=public), sentAt |
+| **Complaint** | id, userId, senderName, subject, message, priority, status, createdAt |
+| **ActivityLog** | id, action, performedBy, createdAt |
 
 ## 📂 Project Structure
-```bash
+```
 civiora/
-├── src/main/java/com/civiora/
-│ ├── controller/
-│ ├── models/
-│ ├── dto/
-│ ├── repository/
-│ └── service/
-├── src/main/resources/
-│ ├── application.properties
-│ └── static/
+├── src/
+│   └── main/
+│       ├── java/com/civiora/civiora/
+│       │   ├── CivioraApplication.java          ← Spring Boot entry point
+│       │   ├── controller/
+│       │   │   ├── AccountsController.java
+│       │   │   ├── AdminController.java
+│       │   │   ├── BookingController.java
+│       │   │   ├── ChatController.java
+│       │   │   ├── ComplaintController.java
+│       │   │   ├── OtpController.java
+│       │   │   ├── PaymentController.java
+│       │   │   └── UserController.java
+│       │   ├── models/
+│       │   │   ├── ActivityLog.java
+│       │   │   ├── Booking.java
+│       │   │   ├── ChatMessage.java
+│       │   │   ├── Complaint.java
+│       │   │   ├── Notice.java
+│       │   │   ├── Payment.java
+│       │   │   ├── Transaction.java
+│       │   │   └── User.java
+│       │   ├── dto/
+│       │   │   ├── LoginDto.java
+│       │   │   └── UpdateDto.java
+│       │   ├── repositories/
+│       │   │   ├── ActivityLogRepo.java
+│       │   │   ├── BookingRepo.java
+│       │   │   ├── ChatRepo.java
+│       │   │   ├── ComplaintRepo.java
+│       │   │   ├── NoticeRepo.java
+│       │   │   ├── PaymentRepo.java
+│       │   │   ├── TransactionRepo.java
+│       │   │   └── UserRepo.java
+│       │   └── service/
+│       │       ├── EmailService.java
+│       │       └── OtpService.java
+│       └── resources/
+│           ├── application.properties
+│           └── static/
+│               ├── index.html                   ← Landing / login redirect
+│               ├── login.html
+│               ├── signup.html
+│               ├── logopage.html
+│               ├── home.html
+│               ├── dashboard.html
+│               ├── admin.html
+│               ├── accounts.html
+│               ├── booking.html
+│               ├── booking-detail.html
+│               ├── chat.html
+│               ├── complaint.html
+│               ├── contact.html
+│               ├── history.html
+│               ├── notices.html
+│               ├── payment.html
+│               ├── profile.html
+│               ├── gym.png
+│               ├── party_hall.png
+│               ├── sports_court.png
+│               ├── swimming_pool.png
+│               ├── games_club.png
+│               └── logo.jpeg
 ├── pom.xml
+├── mvnw / mvnw.cmd                              ← Maven wrapper scripts
+├── .gitignore
+├── HELP.md
 └── README.md
 ```
 
@@ -223,9 +301,12 @@ Civiora addresses these challenges by providing a centralized digital platform f
 ## 🎯 Workflows
 
 **Resident:**  
-Login → Pay Maintenance → Book Facilities → View Notices → Chat  
-**Admin:**  
-Login → Post Notices → View Payments → Manage Bookings → Publish Audit Reports  
+Login → Pay Maintenance → Book Facilities → View Notices → Chat → File Complaints  
+
+**Admin (Hybrid Access):**  
+Login → Post Notices → Monitor Complaints Global → Manage Bookings Global → Publish Audit Reports  
+*Admins can also seamlessly function as residents within their dashboard to:*  
+→ Deposit Wallet Funds → Book Facilities → File Personal Complaints → Chat in Unified Feed → Update Profile.
 
 ---
 

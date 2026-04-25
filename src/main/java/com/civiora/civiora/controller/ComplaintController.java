@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -44,25 +43,4 @@ public class ComplaintController {
         return complaintRepo.findByUserIdOrderByCreatedAtDesc(userId);
     }
 
-    // ── ADMIN: get all complaints ─────────────────────────────────────────────
-    @GetMapping("/admin/complaints")
-    public List<Complaint> getAllComplaints() {
-        return complaintRepo.findAllByOrderByCreatedAtDesc();
-    }
-
-    // ── ADMIN: update status (APPROVED or RESOLVED) ───────────────────────────
-    @PatchMapping("/admin/complaints/{id}/status")
-    public ResponseEntity<String> updateStatus(@PathVariable int id, @RequestBody Map<String, String> body) {
-        Complaint c = complaintRepo.findById(id).orElse(null);
-        if (c == null) return ResponseEntity.notFound().build();
-
-        String newStatus = body.getOrDefault("status", "").toUpperCase();
-        if (!newStatus.equals("APPROVED") && !newStatus.equals("RESOLVED")) {
-            return ResponseEntity.badRequest().body("Status must be APPROVED or RESOLVED");
-        }
-
-        c.setStatus(newStatus);
-        complaintRepo.save(c);
-        return ResponseEntity.ok("Status updated to " + newStatus);
-    }
 }

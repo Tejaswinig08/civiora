@@ -176,7 +176,7 @@ public class BookingController {
             @RequestParam String date,
             @RequestParam String time) {
 
-        int booked = bookingRepo.countByFacilityNameAndBookingDateAndBookingTime(facility, date, time);
+        int booked = bookingRepo.countByFacilityNameAndBookingDateAndBookingTimeAndStatus(facility, date, time, "confirmed");
         int maxCapacity = CAPACITY.getOrDefault(facility, 0);
         int available = Math.max(0, maxCapacity - booked);
 
@@ -250,7 +250,7 @@ public class BookingController {
 
         // ── 1. Capacity check ──────────────────────────────────────────────
         int maxCapacity = CAPACITY.getOrDefault(facility, 0);
-        int booked = bookingRepo.countByFacilityNameAndBookingDateAndBookingTime(facility, date, time);
+        int booked = bookingRepo.countByFacilityNameAndBookingDateAndBookingTimeAndStatus(facility, date, time, "confirmed");
         if (booked >= maxCapacity) {
             response.put("status",  "error");
             response.put("message", "Booking Full for this slot");
