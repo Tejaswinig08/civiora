@@ -488,7 +488,7 @@
             sendOtpBtn.innerHTML = '<span class="spinner"></span>Sending...';
 
             try {
-                const res = await fetch("http://localhost:8080/send-otp", {
+                const res = await fetch("https://civiora-production.up.railway.app/send-otp", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ email: currentEmail })
@@ -530,7 +530,7 @@
             verifyOtpBtn.innerHTML = '<span class="spinner"></span>Verifying...';
 
             try {
-                const res = await fetch("http://localhost:8080/verify-otp", {
+                const res = await fetch("https://civiora-production.up.railway.app/verify-otp", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ email: currentEmail, otp: otp })
@@ -570,7 +570,7 @@
             resendLink.classList.add('disabled');
 
             try {
-                const res = await fetch("http://localhost:8080/send-otp", {
+                const res = await fetch("https://civiora-production.up.railway.app/send-otp", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ email: currentEmail })

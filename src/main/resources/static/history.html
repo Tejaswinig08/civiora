@@ -297,7 +297,7 @@
             }
 
             try {
-                const res = await fetch(`http://localhost:8080/passbook/${userId}`);
+                const res = await fetch(`https://civiora-production.up.railway.app/passbook/${userId}`);
                 transactions = await res.json();
 
 

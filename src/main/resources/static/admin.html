@@ -727,8 +727,8 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const API = 'http://localhost:8080/admin';
-const CHAT_API = 'http://localhost:8080';
+const API = 'https://civiora-production.up.railway.app/admin';
+const CHAT_API = 'https://civiora-production.up.railway.app';
 const ALLOWED = ['secretary','chairman','treasurer','admin'];
 
 const userRole = (localStorage.getItem('role')||'').toLowerCase();
@@ -883,7 +883,7 @@ function renderPayments() {
 // ── ACCOUNTS ──
 async function loadAccounts() {
     try {
-        const res = await fetch(`http://localhost:8080/accounts/summary`);
+        const res = await fetch(`https://civiora-production.up.railway.app/accounts/summary`);
         const summary = await res.json();
         
         const incomeTotal = summary.totalIncome || 0;

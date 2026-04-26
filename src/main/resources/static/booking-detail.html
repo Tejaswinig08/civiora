@@ -638,7 +638,7 @@
 
             try {
                 // ── Capacity check (existing endpoint) ──
-                const res = await fetch(`http://localhost:8080/bookings/availability?facility=${currentFacility.id}&date=${date}&time=${encodeURIComponent(time)}`);
+                const res = await fetch(`https://civiora-production.up.railway.app/bookings/availability?facility=${currentFacility.id}&date=${date}&time=${encodeURIComponent(time)}`);
                 const data = await res.json();
                 currentAvailability = data;
 
@@ -658,7 +658,7 @@
                 const end24   = isGroup ? to24h(leavingTime) : addOneHour(start24);
 
                 const cRes  = await fetch(
-                    `http://localhost:8080/bookings/conflict-check?facility=${currentFacility.id}&date=${date}&startTime=${start24}&endTime=${end24}`
+                    `https://civiora-production.up.railway.app/bookings/conflict-check?facility=${currentFacility.id}&date=${date}&startTime=${start24}&endTime=${end24}`
                 );
                 const cData = await cRes.json();
 

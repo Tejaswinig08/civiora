@@ -280,7 +280,7 @@
             }
 
             try {
-                const res = await fetch('http://localhost:8080/complaints', {
+                const res = await fetch('https://civiora-production.up.railway.app/complaints', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ userId: parseInt(userId), senderName: userName, subject, message, priority })
@@ -303,7 +303,7 @@
         // ── Load ──────────────────────────────────────────────────────────────
         async function loadComplaints() {
             try {
-                const res  = await fetch(`http://localhost:8080/complaints/user/${userId}`);
+                const res  = await fetch(`https://civiora-production.up.railway.app/complaints/user/${userId}`);
                 const list = await res.json();
                 renderComplaints(list);
             } catch {

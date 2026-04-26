@@ -80,7 +80,7 @@ let readSet = loadReadState();
 // ─── LOAD NOTICES ──────────────────────────────────────────────────────────────
 async function loadNotices() {
     try {
-        const res = await fetch('http://localhost:8080/admin/notices?_t=' + Date.now());
+        const res = await fetch('https://civiora-production.up.railway.app/admin/notices?_t=' + Date.now());
         if (res.ok) {
             allNotices = await res.json();
             renderNotices(allNotices);

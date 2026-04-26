@@ -63,7 +63,7 @@ spring.datasource.password=your_password
 mvn spring-boot:run
 
 # 5. Open in browser
-http://localhost:8080 
+https://civiora-production.up.railway.app 
 ```
 
 ## 📡 API Architecture
@@ -149,37 +149,37 @@ The system follows a modular RESTful API design, organized by domain for scalabi
 
 ```bash
 # Send OTP
-curl -X POST http://localhost:8080/send-otp \
+curl -X POST https://civiora-production.up.railway.app/send-otp \
 -H "Content-Type: application/json" \
 -d '{"email":"user@example.com"}'
 
 # Verify OTP
-curl -X POST http://localhost:8080/verify-otp \
+curl -X POST https://civiora-production.up.railway.app/verify-otp \
 -H "Content-Type: application/json" \
 -d '{"email":"user@example.com","otp":"123456"}'
 
 # Deposit to wallet
-curl -X POST http://localhost:8080/deposit \
+curl -X POST https://civiora-production.up.railway.app/deposit \
 -H "Content-Type: application/json" \
 -d '{"userId":1,"amount":2000,"description":"Monthly maintenance"}'
 
 # Book a facility
-curl -X POST http://localhost:8080/bookings \
+curl -X POST https://civiora-production.up.railway.app/bookings \
 -H "Content-Type: application/json" \
 -d '{"userId":1,"facility":"gym","date":"2026-04-10","time":"09:00 AM","startTime":"09:00","endTime":"10:00"}'
 
 # Raise a Complaint
-curl -X POST http://localhost:8080/complaints \
+curl -X POST https://civiora-production.up.railway.app/complaints \
 -H "Content-Type: application/json" \
 -d '{"userId":1,"senderName":"Ravi Kumar","subject":"Water Leakage","message":"Leak in bathroom pipe","priority":"HIGH"}'
 
 # Send a public broadcast message
-curl -X POST http://localhost:8080/chat/send \
+curl -X POST https://civiora-production.up.railway.app/chat/send \
 -H "Content-Type: application/json" \
 -d '{"userId":1,"message":"Society meeting at 7 PM today"}'
 
 # Send a private DM
-curl -X POST http://localhost:8080/chat/send \
+curl -X POST https://civiora-production.up.railway.app/chat/send \
 -H "Content-Type: application/json" \
 -d '{"userId":1,"message":"Can you help me?","receiverId":3}'
 ```

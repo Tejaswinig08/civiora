@@ -352,7 +352,7 @@
             try {
                 if (isBookingCheckout) {
                     // Booking checkout — send startTime + endTime for backend conflict guard
-                    const res = await fetch('http://localhost:8080/bookings', {
+                    const res = await fetch('https://civiora-production.up.railway.app/bookings', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
@@ -382,7 +382,7 @@
                     }
                 } else {
                     // Standard Wallet Deposit
-                    const res = await fetch('http://localhost:8080/deposit', {
+                    const res = await fetch('https://civiora-production.up.railway.app/deposit', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({

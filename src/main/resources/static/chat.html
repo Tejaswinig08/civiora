@@ -409,7 +409,7 @@
         // ── LOAD USERS FOR DROPDOWN + userMap ────────────────────────────
         async function loadUsers() {
             try {
-                const res   = await fetch('http://localhost:8080/chat/users');
+                const res   = await fetch('https://civiora-production.up.railway.app/chat/users');
                 const users = await res.json();
                 const sel   = document.getElementById('recipientSelect');
 
@@ -472,7 +472,7 @@
 
         // ── BUILD API URL (always unified mode) ───────────────────────────
         function buildUrl(base) {
-            return `http://localhost:8080${base}?mode=unified&userId=${myId}`;
+            return `https://civiora-production.up.railway.app${base}?mode=unified&userId=${myId}`;
         }
 
         // ── LOAD MESSAGES (full refresh) ──────────────────────────────
@@ -596,7 +596,7 @@
             if (currentWith > 0) body.receiverId = currentWith;
 
             try {
-                const res  = await fetch('http://localhost:8080/chat/send', {
+                const res  = await fetch('https://civiora-production.up.railway.app/chat/send', {
                     method:  'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body:    JSON.stringify(body)

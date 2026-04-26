@@ -202,7 +202,7 @@
             const content = document.getElementById('mainContent');
 
             try {
-                const res = await fetch('http://localhost:8080/accounts/summary');
+                const res = await fetch('https://civiora-production.up.railway.app/accounts/summary');
                 const d = await res.json();
 
                 const incomeTotal = d.totalIncome || 0;
